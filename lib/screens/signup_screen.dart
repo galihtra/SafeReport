@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:safe_report/model/user_model.dart';
 import 'package:safe_report/screens/signin_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -176,21 +178,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () async {
-                        // Aksi ketika tombol ditekan
                         try {
-                          await FirebaseAuth.instance
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
                               .createUserWithEmailAndPassword(
                                   email: _emailController.text.trim(),
                                   password: _passwordController.text.trim());
 
-                          // navigate to sign in screen after successful sign up
+                          // Create a new user model
+                          UserModel user = UserModel(
+                              uid: userCredential.user!.uid,
+                              name: _nameController.text.trim(),
+                              email: _emailController.text.trim(),
+                              gender: gender);
+
+                          // Store user data in Firestore
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(user.uid)
+                              .set(user.toMap());
+
+                          // Navigate to sign in screen
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SignInScreen()),
                           );
                         } catch (e) {
-                          // handle error
                           print(e);
                         }
                       },
@@ -253,4 +267,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-
