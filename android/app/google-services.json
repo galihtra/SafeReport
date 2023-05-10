@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "383661378496",
+    "project_id": "safereport-c8cbe",
+    "storage_bucket": "safereport-c8cbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383661378496:android:86b8502406df67144ed625",
+        "android_client_info": {
+          "package_name": "com.example.safe_report"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383661378496-f9pnuhrlokol96vuv4fq03d7fjdjjm67.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYT-vr5jTJ-Ljb9-84HBFXZluLtDDOdb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383661378496-f9pnuhrlokol96vuv4fq03d7fjdjjm67.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
