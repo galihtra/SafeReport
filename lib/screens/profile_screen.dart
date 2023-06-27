@@ -39,7 +39,11 @@ class _ProfilePageState extends State<Profile> {
     setState(() {
       _nameController.text = snapshot['name'] ?? '';
       _emailController.text = snapshot['email'] ?? '';
-      _imageURL = snapshot['image_url'] ?? '';
+      try {
+        _imageURL = snapshot['image_url'];
+      } catch (e) {
+        print('Caught error: $e');
+      }
     });
   }
 
@@ -109,7 +113,8 @@ class _ProfilePageState extends State<Profile> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Profil'),
-          backgroundColor: Color(0xFFEC407A),// Set the app bar color to transparent
+          backgroundColor:
+              Color(0xFFEC407A), // Set the app bar color to transparent
           elevation: 0, // Remove the shadow
         ),
         drawer: Drawer(
@@ -192,7 +197,7 @@ class _ProfilePageState extends State<Profile> {
                 ),
                 const SizedBox(height: 25),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerRight,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
