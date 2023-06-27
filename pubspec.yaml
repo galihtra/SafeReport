@@ -81,6 +81,9 @@ flutter:
     - assets/images/pelaporan_logo.png
     - assets/images/edukasi_logo.png
     - assets/images/kampanye_logo.png
+    - assets/images/rs.png
+    - assets/images/pemadam.png
+    - assets/images/polisi.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

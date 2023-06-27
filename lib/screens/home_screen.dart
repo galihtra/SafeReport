@@ -297,19 +297,20 @@ class HomeScreen extends StatelessWidget {
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-// Rumah Sakit
+                                    // Rumah Sakit
                                     GestureDetector(
                                       onTap: () {
                                         launch(
-                                            "tel://12345678"); // Ganti nomor telepon dengan nomor rumah sakit
+                                            "tel://0778431777"); // Ganti nomor telepon dengan nomor rumah sakit
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
                                         children: [
-                                          Icon(
-                                            Icons.phone,
-                                            color: Colors.red,
-                                            size: 20,
+                                          CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor: Colors.red,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/rs.png'),
                                           ),
                                           SizedBox(width: 10),
                                           Expanded(
@@ -318,23 +319,30 @@ class HomeScreen extends StatelessWidget {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 8),
-// Pemadam Kebakaran
-                                    GestureDetector(
-                                      onTap: () {
-                                        launch(
-                                            "tel://12345678"); // Ganti nomor telepon dengan nomor pemadam kebakaran
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Row(
-                                        children: [
+                                          SizedBox(width: 10),
                                           Icon(
                                             Icons.phone,
                                             color: Colors.red,
                                             size: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    // Pemadam Kebakaran
+                                    GestureDetector(
+                                      onTap: () {
+                                        launch(
+                                            "tel:0778371560"); // Ganti nomor telepon dengan nomor pemadam kebakaran
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor: Colors.red,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/pemadam.png'),
                                           ),
                                           SizedBox(width: 10),
                                           Expanded(
@@ -343,23 +351,30 @@ class HomeScreen extends StatelessWidget {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: 8),
-// Kantor Polisi
-                                    GestureDetector(
-                                      onTap: () {
-                                        launch(
-                                            "tel://12345678"); // Ganti nomor telepon dengan nomor kantor polisi
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Row(
-                                        children: [
+                                          SizedBox(width: 10),
                                           Icon(
                                             Icons.phone,
                                             color: Colors.red,
                                             size: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+                                    // Kantor Polisi
+                                    GestureDetector(
+                                      onTap: () {
+                                        launch(
+                                            "tel://112"); // Ganti nomor telepon dengan nomor kantor polisi
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 25,
+                                            backgroundColor: Colors.red,
+                                            backgroundImage: AssetImage(
+                                                'assets/images/polisi.png'),
                                           ),
                                           SizedBox(width: 10),
                                           Expanded(
@@ -367,6 +382,12 @@ class HomeScreen extends StatelessWidget {
                                               'Kantor Polisi',
                                               style: TextStyle(fontSize: 16),
                                             ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.red,
+                                            size: 20,
                                           ),
                                         ],
                                       ),
