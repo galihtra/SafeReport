@@ -188,7 +188,7 @@ class _ProfilePageState extends State<Profile> {
                               Icons.camera_alt,
                               size: 40,
                             ),
-                            color: Colors.green[600],
+                            color: Color(0xFFEC407A),
                           ),
                         )
                       ],
@@ -197,7 +197,7 @@ class _ProfilePageState extends State<Profile> {
                 ),
                 const SizedBox(height: 25),
                 Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(

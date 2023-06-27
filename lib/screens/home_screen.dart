@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -17,36 +16,80 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      body: FutureBuilder<DocumentSnapshot>(
-        future: getUserData(),
-        builder: (BuildContext context,
-            AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-            return Center(
+    return FutureBuilder<DocumentSnapshot>(
+      future: getUserData(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data =
+              snapshot.data!.data() as Map<String, dynamic>;
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Nama: ${data['name']}"),
-                  Text("Email: ${data['email']}"),
-                  Text("Gender: ${data['gender']}"),
+                  SizedBox(height: 25),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (data['image_url'] != null)
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(data['image_url']),
+                          radius: 22,
+                        )
+                      else
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          backgroundImage:
+                              AssetImage('assets/images/default_avatar.png'),
+                          radius: 22,
+                        ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.waving_hand,
+                            color: Color(0xFFEC407A),
+                            size: 28,
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 10),
+                            child: Text(
+                              "Hi, ${data['name']}",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
                 ],
               ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.none) {
-            return Text("No user logged in");
-          } else {
-            return Center(
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.none) {
+          return Scaffold(
+            body: Center(child: Text("No user logged in")),
+          );
+        } else {
+          return Scaffold(
+            body: Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // Anda bisa ganti warna sesuai keinginan
-                strokeWidth: 5, // Ketebalan lingkaran
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                strokeWidth: 5,
               ),
-            );
-          }
-        },
-      ),
+            ),
+          );
+        }
+      },
     );
   }
 }
