@@ -58,12 +58,23 @@ class HomeScreen extends StatelessWidget {
                           ),
                           Container(
                             margin: EdgeInsets.only(right: 10),
-                            child: Text(
-                              "Hi, ${data['name']}",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Hi, ",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                Text(
+                                  data['name'],
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -71,6 +82,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10),
+                  
                 ],
               ),
             ),
