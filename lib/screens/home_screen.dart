@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -278,8 +280,136 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Telepon Darurat
-                  
+                  SizedBox(
+                    height: 30,
+                  ),
+                  // Kontak Darurat
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('KONTAK DARURAT'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+// Rumah Sakit
+                                    GestureDetector(
+                                      onTap: () {
+                                        launch(
+                                            "tel://12345678"); // Ganti nomor telepon dengan nomor rumah sakit
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.red,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              'Rumah Sakit',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+// Pemadam Kebakaran
+                                    GestureDetector(
+                                      onTap: () {
+                                        launch(
+                                            "tel://12345678"); // Ganti nomor telepon dengan nomor pemadam kebakaran
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.red,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              'Pemadam Kebakaran',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+// Kantor Polisi
+                                    GestureDetector(
+                                      onTap: () {
+                                        launch(
+                                            "tel://12345678"); // Ganti nomor telepon dengan nomor kantor polisi
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            color: Colors.red,
+                                            size: 20,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              'Kantor Polisi',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          side: BorderSide(
+                            color: Colors.red, // Warna border merah
+                            width: 2,
+                          ),
+                          minimumSize: Size(double.infinity,
+                              55), // Lebar menyesuaikan ukuran perangkat
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.phone,
+                              color: Colors.red,
+                              size: 28,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'KONTAK DARURAT',
+                              style: GoogleFonts.inter(
+                                fontSize: 18,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
