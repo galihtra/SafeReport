@@ -81,7 +81,204 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 50),
+                  // Bagian atas kategori
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Rescue
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 75,
+                                height: 75,
+                                color: Colors.red,
+                                child: Image.asset(
+                                    "assets/images/rescue_logo.png"),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Rescue",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF9D9D9D),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Pendampingan
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: 75,
+                              height: 75,
+                              color: Color(0xFFF4E8EA),
+                              child: Image.asset(
+                                  "assets/images/pendampingan_logo.png"),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Pendampingan",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF9D9D9D),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Konsultasi Online
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 20),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 75,
+                                height: 75,
+                                color: Color(0xFFF4E8EA),
+                                child: Image.asset(
+                                    "assets/images/konsultasi_logo.png"),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Column(
+                              children: [
+                                Text(
+                                  "Konsultasi",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF9D9D9D),
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Online",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF9D9D9D),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Bagian bawah kategori
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Edukasi
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 75,
+                                height: 75,
+                                color: Color(0xFFF4E8EA),
+                                child: Image.asset(
+                                    "assets/images/edukasi_logo.png"),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "Edukasi",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF9D9D9D),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Kampanye
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: 75,
+                              height: 75,
+                              color: Color(0xFFF4E8EA),
+                              child: Image.asset(
+                                  "assets/images/kampanye_logo.png"),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "Kampanye",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF9D9D9D),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Pelaporan
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 75,
+                                height: 75,
+                                color: Color(0xFFF4E8EA),
+                                child: Image.asset(
+                                    "assets/images/pelaporan_logo.png"),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "Pelaporan",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF9D9D9D),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Telepon Darurat
                   
                 ],
               ),
