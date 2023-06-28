@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 30),
                   // Bagian atas kategori
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -319,7 +319,7 @@ class HomeScreen extends StatelessWidget {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          SizedBox(width: 20),
                                           Icon(
                                             Icons.phone,
                                             color: Colors.red,
@@ -351,7 +351,7 @@ class HomeScreen extends StatelessWidget {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          SizedBox(width: 20),
                                           Icon(
                                             Icons.phone,
                                             color: Colors.red,
@@ -383,7 +383,7 @@ class HomeScreen extends StatelessWidget {
                                               style: TextStyle(fontSize: 16),
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          SizedBox(width: 20),
                                           Icon(
                                             Icons.phone,
                                             color: Colors.red,
