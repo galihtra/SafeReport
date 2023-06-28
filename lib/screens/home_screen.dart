@@ -431,6 +431,10 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // List Article
+                  SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),
