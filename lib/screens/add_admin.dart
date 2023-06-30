@@ -39,7 +39,7 @@ class _AddAdminState extends State<AddAdmin> {
         'gender': _selectedGender,
       });
 
-      _showNotification('Admin added successfully');
+      _showNotification('Relawan berhasil ditambahkan');
       Navigator.pop(context);
       // Close the AddAdmin screen after adding admin
     } catch (error) {
