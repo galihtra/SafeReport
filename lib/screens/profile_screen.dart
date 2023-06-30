@@ -6,9 +6,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:safe_report/screens/signin_screen.dart';
+import 'package:safe_report/screens/add_admin.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
+
+  
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -19,6 +22,8 @@ class _ProfilePageState extends State<Profile> {
   final ImagePicker _imagePicker = ImagePicker();
   File? _selectedImage;
   String? _imageURL;
+
+  bool _isAdmin = false; // Variable to store admin status
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -31,21 +36,28 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _fetchProfileData() async {
-    DocumentSnapshot snapshot = await _firestore
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
+  DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .get();
 
-    setState(() {
-      _nameController.text = snapshot['name'] ?? '';
-      _emailController.text = snapshot['email'] ?? '';
-      try {
-        _imageURL = snapshot['image_url'];
-      } catch (e) {
-        print('Caught error: $e');
-      }
-    });
+  if (snapshot.exists) {
+    Map<String, dynamic>? data = snapshot.data();
+    if (data != null) {
+      setState(() {
+        _nameController.text = data['name'] ?? '';
+        _emailController.text = data['email'] ?? '';
+        try {
+          _imageURL = data['image_url'];
+        } catch (e) {
+          print('Caught error: $e');
+        }
+        _isAdmin = data['isAdmin'] ?? false;
+      });
+    }
   }
+}
+
 
   Future<void> _updateProfileData() async {
     await _firestore
@@ -133,6 +145,19 @@ class _ProfilePageState extends State<Profile> {
                   ),
                 ),
               ),
+              if (_isAdmin) // Check if the current user is an admin
+                ListTile(
+                  leading: Icon(Icons.add),
+                  title: Text('Add Admin'),
+                  onTap: () {
+                    // Perform the desired action when the Add Admin option is tapped
+                    // For example, navigate to the AddAdminScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddAdmin()),
+                    );
+                  },
+                ),
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
@@ -149,20 +174,17 @@ class _ProfilePageState extends State<Profile> {
         ),
         body: SingleChildScrollView(
           child: Stack(children: [
-            Container(
-              height: 180,
-              decoration: const BoxDecoration(
-                color: Color(0xFFEC407A),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
-                ),
-              ),
+            Image(
+              width: 397,
+              height: 150,
+              fit: BoxFit.cover,
+              image: AssetImage(
+                  'assets/images/profile_bg.png'), // Replace with the path to your image
             ),
             Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 120),
+                  margin: const EdgeInsets.only(top: 90),
                   alignment: Alignment.center,
                   child: GestureDetector(
                     onTap: _updateProfileImage,
@@ -184,11 +206,11 @@ class _ProfilePageState extends State<Profile> {
                           right: 0,
                           child: IconButton(
                             onPressed: _updateProfileImage,
-                            icon: Icon(
-                              Icons.camera_alt,
-                              size: 40,
+                            icon: Image.asset(
+                              'assets/images/camera.png', // Replace with the path to your image
+                              height: 50,
+                              fit: BoxFit.cover,
                             ),
-                            color: Color(0xFFEC407A),
                           ),
                         )
                       ],

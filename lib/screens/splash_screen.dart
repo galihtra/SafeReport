@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:safe_report/screens/signin_screen.dart';
 import 'package:safe_report/screens/navigation_bar.dart'; // Pastikan untuk mengimpor file Home Screen Anda di sini
+import 'package:safe_report/screens/admin_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen(this.color, {super.key});
@@ -18,13 +20,26 @@ class SplashScreen extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 3));
 
     if (user != null) {
-      // Jika user sudah masuk sebelumnya, langsung navigasi ke Home Screen
-      Get.offAll(() => BarNavigation());
+      // User is logged in, check admin status
+      // User is logged in, check admin status
+      DocumentSnapshot<Map<String, dynamic>> userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+      bool isAdmin = userSnapshot.data()!['isAdmin'] ?? false;
+      if (isAdmin) {
+        // Navigate to the admin home screen
+        Get.offAll(() => AdminNavigationBar());
+      } else {
+        // Navigate to the user home screen
+        Get.offAll(() => BarNavigation());
+      }
     } else {
-      // Jika belum ada user yang masuk, navigasi ke Sign In Screen
-      Get.offAll(() => const SignInScreen());
-    }
-  }
+      // No user logged in, navigate to the sign-in screen
+      Get.offAll(() => SignInScreen());
+    } 
+}
 
   @override
   Widget build(BuildContext context) {

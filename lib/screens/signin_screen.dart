@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:safe_report/screens/signup_screen.dart';
+import 'package:safe_report/screens/admin_home_screen.dart';
 import 'package:safe_report/screens/navigation_bar.dart';
+import 'package:safe_report/screens/admin_navigation_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -94,8 +97,9 @@ class _SignInScreenState extends State<SignInScreen> {
                               isHidden = !isHidden;
                             });
                           },
-                          icon: Icon(
-                              isHidden ? Icons.visibility_off : Icons.visibility),
+                          icon: Icon(isHidden
+                              ? Icons.visibility_off
+                              : Icons.visibility),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -119,23 +123,45 @@ class _SignInScreenState extends State<SignInScreen> {
                       onPressed: () async {
                         // Aksi ketika tombol ditekan
                         try {
-                          
-                          await FirebaseAuth.instance.signInWithEmailAndPassword(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),    
-                              );
-                           
-                          // navigate to home screen after successful sign in
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => BarNavigation()),
+                          UserCredential userCredential = await FirebaseAuth
+                              .instance
+                              .signInWithEmailAndPassword(
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim(),
                           );
-                         
+
+                          // fetch the user from Firestore using the uid
+                          DocumentSnapshot userSnapshot =
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(userCredential.user!.uid)
+                                  .get();
+
+                          // check if user is an admin
+                          bool isAdmin = userSnapshot['isAdmin'] ?? false;
+
+                          if (isAdmin) {
+                            // navigate to admin home screen if user is an admin
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AdminNavigationBar()),
+                            );
+                          } else {
+                            // navigate to normal user home screen if user is not an admin
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BarNavigation()),
+                            );
+                          }
                         } catch (error) {
-                            print(error);
-                            if (error is FirebaseAuthException) {
-                                String errorMessage = error.message ?? "An error occurred";
-                                 Fluttertoast.showToast(msg: errorMessage, gravity: ToastGravity.TOP);
+                          print(error);
+                          if (error is FirebaseAuthException) {
+                            String errorMessage =
+                                error.message ?? "An error occurred";
+                            Fluttertoast.showToast(
+                                msg: errorMessage, gravity: ToastGravity.TOP);
                           }
                         }
                       },
