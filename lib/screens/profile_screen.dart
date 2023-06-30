@@ -11,8 +11,6 @@ import 'package:safe_report/screens/add_admin.dart';
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
-  
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -36,28 +34,27 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _fetchProfileData() async {
-  DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .get();
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
 
-  if (snapshot.exists) {
-    Map<String, dynamic>? data = snapshot.data();
-    if (data != null) {
-      setState(() {
-        _nameController.text = data['name'] ?? '';
-        _emailController.text = data['email'] ?? '';
-        try {
-          _imageURL = data['image_url'];
-        } catch (e) {
-          print('Caught error: $e');
-        }
-        _isAdmin = data['isAdmin'] ?? false;
-      });
+    if (snapshot.exists) {
+      Map<String, dynamic>? data = snapshot.data();
+      if (data != null) {
+        setState(() {
+          _nameController.text = data['name'] ?? '';
+          _emailController.text = data['email'] ?? '';
+          try {
+            _imageURL = data['image_url'];
+          } catch (e) {
+            print('Caught error: $e');
+          }
+          _isAdmin = data['isAdmin'] ?? false;
+        });
+      }
     }
   }
-}
-
 
   Future<void> _updateProfileData() async {
     await _firestore
@@ -175,8 +172,8 @@ class _ProfilePageState extends State<Profile> {
         body: SingleChildScrollView(
           child: Stack(children: [
             Image(
-              width: 397,
-              height: 150,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.2,
               fit: BoxFit.cover,
               image: AssetImage(
                   'assets/images/profile_bg.png'), // Replace with the path to your image
