@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:safe_report/screens/signup_screen.dart';
 import 'package:safe_report/screens/admin_home_screen.dart';
 import 'package:safe_report/screens/navigation_bar.dart';
+import 'package:safe_report/screens/admin_navigation_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -144,8 +145,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      AdminHomeScreen()), // replace this with your Admin Home Screen
+                                  builder: (context) => AdminNavigationBar()),
                             );
                           } else {
                             // navigate to normal user home screen if user is not an admin

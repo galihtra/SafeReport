@@ -92,6 +92,8 @@ flutter:
     - assets/images/notif_active.png
     - assets/images/status_active.png
     - assets/images/article_active.png
+    - assets/images/profile_bg.png
+    - assets/images/camera.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
