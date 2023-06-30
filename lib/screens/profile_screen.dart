@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:safe_report/screens/signin_screen.dart';
 import 'package:safe_report/screens/add_admin.dart';
+import 'package:flutter/services.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -26,6 +27,7 @@ class _ProfilePageState extends State<Profile> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -83,6 +85,19 @@ class _ProfilePageState extends State<Profile> {
     _showNotification('Profile updated successfully');
   }
 
+  Future<void> _changePassword() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && _passwordController.text.isNotEmpty) {
+      try {
+        await user.updatePassword(_passwordController.text);
+        _showNotification('Password updated successfully');
+      } catch (error) {
+        print('Caught error: $error');
+        _showNotification('Password update failed');
+      }
+    }
+  }
+
   Future<String> uploadImageToStorage(File imageFile) async {
     String fileName = imageFile.path.split('/').last;
     final Reference storageRef =
@@ -105,7 +120,9 @@ class _ProfilePageState extends State<Profile> {
       });
     }
 
-    _imageURL = await uploadImageToStorage(_selectedImage!);
+    if (_selectedImage != null) {
+      _imageURL = await uploadImageToStorage(_selectedImage!);
+    }
   }
 
   void _showNotification(String message) {
@@ -170,127 +187,176 @@ class _ProfilePageState extends State<Profile> {
           ),
         ),
         body: SingleChildScrollView(
-          child: Stack(children: [
-            Image(
-              width: 397,
-              height: 150,
-              fit: BoxFit.cover,
-              image: AssetImage(
-                  'assets/images/profile_bg.png'), // Replace with the path to your image
-            ),
-            Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 90),
-                  alignment: Alignment.center,
-                  child: GestureDetector(
-                    onTap: _updateProfileImage,
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 60,
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : (_imageURL != null && _imageURL!.isNotEmpty)
-                                  ? NetworkImage(_imageURL!)
-                                  : AssetImage(
-                                          'assets/images/default_avatar.png')
-                                      as ImageProvider<Object>,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: IconButton(
-                            onPressed: _updateProfileImage,
-                            icon: Image.asset(
-                              'assets/images/camera.png', // Replace with the path to your image
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
+          child: Stack(
+            children: [
+              Image(
+                width: 397,
+                height: 150,
+                fit: BoxFit.cover,
+                image: AssetImage(
+                    'assets/images/profile_bg.png'), // Replace with the path to your image
+              ),
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 90),
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTap: _updateProfileImage,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 60,
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : (_imageURL != null && _imageURL!.isNotEmpty)
+                                    ? NetworkImage(_imageURL!)
+                                    : AssetImage(
+                                            'assets/images/default_avatar.png')
+                                        as ImageProvider<Object>,
                           ),
-                        )
-                      ],
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: _updateProfileImage,
+                              icon: Image.asset(
+                                'assets/images/camera.png', // Replace with the path to your image
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 25),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  const SizedBox(height: 25),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Nama',
+                        style: GoogleFonts.inter(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(color: Colors.grey)),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          fillColor: Colors.grey // Remove underline
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Email',
+                        style: GoogleFonts.inter(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: Colors.grey,
+                        )),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none, // Remove underline
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Ganti Password',
+                        style: GoogleFonts.inter(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: Colors.grey,
+                        )),
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: TextField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none, // Remove underline
+                      ),
+                      obscureText: true, // Hide the password
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  // Ganti Password
+                  ElevatedButton(
+                    onPressed: _changePassword,
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF4CAF50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      minimumSize: const Size(350, 55),
+                    ),
                     child: Text(
-                      'Nama',
-                      style: GoogleFonts.inter(
-                          fontSize: 18, fontWeight: FontWeight.w500),
+                      'Ganti Password',
+                      style: GoogleFonts.inter(fontSize: 18),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(color: Colors.grey)),
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        fillColor: Colors.grey // Remove underline
-                        ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                  const SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: _updateProfileData,
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFFEC407A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      minimumSize: const Size(350, 55),
+                    ),
                     child: Text(
-                      'Email',
-                      style: GoogleFonts.inter(
-                          fontSize: 18, fontWeight: FontWeight.w500),
+                      'Perbarui Profil',
+                      style: GoogleFonts.inter(fontSize: 18),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.grey,
-                      )),
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none, // Remove underline
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 45),
-                ElevatedButton(
-                  onPressed: _updateProfileData,
-                  style: ElevatedButton.styleFrom(
-                    primary: const Color(0xFFEC407A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    minimumSize: const Size(350, 55),
-                  ),
-                  child: Text(
-                    'Perbarui Profil',
-                    style: GoogleFonts.inter(fontSize: 18),
-                  ),
-                ),
-              ],
-            ),
-          ]),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 }
