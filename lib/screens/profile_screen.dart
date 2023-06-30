@@ -11,8 +11,6 @@ import 'package:safe_report/screens/add_admin.dart';
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
-  
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -36,28 +34,27 @@ class _ProfilePageState extends State<Profile> {
   }
 
   Future<void> _fetchProfileData() async {
-  DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .get();
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
 
-  if (snapshot.exists) {
-    Map<String, dynamic>? data = snapshot.data();
-    if (data != null) {
-      setState(() {
-        _nameController.text = data['name'] ?? '';
-        _emailController.text = data['email'] ?? '';
-        try {
-          _imageURL = data['image_url'];
-        } catch (e) {
-          print('Caught error: $e');
-        }
-        _isAdmin = data['isAdmin'] ?? false;
-      });
+    if (snapshot.exists) {
+      Map<String, dynamic>? data = snapshot.data();
+      if (data != null) {
+        setState(() {
+          _nameController.text = data['name'] ?? '';
+          _emailController.text = data['email'] ?? '';
+          try {
+            _imageURL = data['image_url'];
+          } catch (e) {
+            print('Caught error: $e');
+          }
+          _isAdmin = data['isAdmin'] ?? false;
+        });
+      }
     }
   }
-}
-
 
   Future<void> _updateProfileData() async {
     await _firestore
@@ -148,7 +145,7 @@ class _ProfilePageState extends State<Profile> {
               if (_isAdmin) // Check if the current user is an admin
                 ListTile(
                   leading: Icon(Icons.add),
-                  title: Text('Add Admin'),
+                  title: Text('Tambah Relawan'),
                   onTap: () {
                     // Perform the desired action when the Add Admin option is tapped
                     // For example, navigate to the AddAdminScreen

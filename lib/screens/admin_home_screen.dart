@@ -70,7 +70,7 @@ class AdminHomeScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "Admin",
+                                  data['name'] ?? '',
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
