@@ -145,7 +145,7 @@ class _ProfilePageState extends State<Profile> {
               if (_isAdmin) // Check if the current user is an admin
                 ListTile(
                   leading: Icon(Icons.add),
-                  title: Text('Add Admin'),
+                  title: Text('Tambah Relawan'),
                   onTap: () {
                     // Perform the desired action when the Add Admin option is tapped
                     // For example, navigate to the AddAdminScreen
