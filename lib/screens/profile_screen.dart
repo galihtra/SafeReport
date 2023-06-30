@@ -190,8 +190,8 @@ class _ProfilePageState extends State<Profile> {
           child: Stack(
             children: [
               Image(
-                width: 397,
-                height: 150,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.2,
                 fit: BoxFit.cover,
                 image: AssetImage(
                     'assets/images/profile_bg.png'), // Replace with the path to your image
@@ -215,6 +215,18 @@ class _ProfilePageState extends State<Profile> {
                                     : AssetImage(
                                             'assets/images/default_avatar.png')
                                         as ImageProvider<Object>,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: _updateProfileImage,
+                              icon: Image.asset(
+                                'assets/images/camera.png', // Replace with the path to your image
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                           Positioned(
                             bottom: 0,
