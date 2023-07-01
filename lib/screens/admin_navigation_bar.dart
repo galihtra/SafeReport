@@ -25,7 +25,7 @@ class AdminNavigationBar extends StatefulWidget {
 
 class _NavigationBar extends State<AdminNavigationBar> {
   int _currentIndex = 0;
-  final pages = [AdminHomeScreen(), Status(), AddArticle(), Notifications(), Profile()];
+  final pages = [AdminHomeScreen(), Status(), ArticleListScreen(), Notifications(), Profile()];
 
   @override
   Widget build(BuildContext context) {
