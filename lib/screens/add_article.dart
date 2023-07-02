@@ -40,6 +40,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Kumpulan Artikel'),
+        automaticallyImplyLeading: false, // Menonaktifkan tombol kembali
         backgroundColor: Color(0xFFEC407A),
       ),
       body: StreamBuilder<QuerySnapshot>(
