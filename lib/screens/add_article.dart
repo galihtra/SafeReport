@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:google_fonts/google_fonts.dart';
 
 class ArticleListScreen extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
     await _firestore.collection('articles').doc(id).delete();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Article deleted')),
+      SnackBar(content: Text('Artikel dihapus')),
     );
   }
 
@@ -30,7 +31,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
     await _firestore.collection('articles').doc(id).delete();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Article deleted')),
+      SnackBar(content: Text('Artikel dihapus')),
     );
   }
 
@@ -38,7 +39,8 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Articles'),
+        title: Text('Kumpulan Artikel'),
+        backgroundColor: Color(0xFFEC407A),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore.collection('articles').snapshots(),
@@ -52,43 +54,59 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
           return ListView(
             children: snapshot.data!.docs.map((doc) {
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-              return ListTile(
-                leading: data['image_url'] != null
-                    ? Image.network(data['image_url'])
-                    : Icon(Icons.image, size: 50),
-                title: Text(data['title']),
-                subtitle: Text(data['description']),
-                trailing: Wrap(
-                  spacing: 12, // space between two icons
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UpdateArticleScreen(
-                              id: doc.id,
-                              title: data['title'],
-                              description: data['description'],
-                              imageUrl: data['image_url'] ?? '',
+              return Container(
+                margin: const EdgeInsets.symmetric(
+                    vertical: 8.0), // margin atas dan bawah
+                child: ListTile(
+                  leading: data['image_url'] != null
+                      ? Container(
+                          width: 80,
+                          height: 180,
+                          child: Image.network(data['image_url'],
+                              fit: BoxFit.cover),
+                        )
+                      : Icon(Icons.image, size: 50),
+                  title: Text(
+                    data['title'].length > 100
+                        ? data['title'].substring(0, 100) + '...'
+                        : data['title'],
+                  ),
+                  subtitle: Text(
+                    data['description'].length > 100
+                        ? data['description'].substring(0, 100) + '...'
+                        : data['description'],
+                  ),
+                  trailing: Wrap(
+                    spacing: 12, // space between two icons
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateArticleScreen(
+                                id: doc.id,
+                                title: data['title'],
+                                description: data['description'],
+                                imageUrl: data['image_url'] ?? '',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        if (data['image_url'] != null) {
-                          _deleteArticle(doc.id, data['image_url']);
-                        } else {
-                          _deleteArticleWithoutImage(doc.id);
-                        }
-                      },
-                    ),
-                  ],
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          if (data['image_url'] != null) {
+                            _deleteArticle(doc.id, data['image_url']);
+                          } else {
+                            _deleteArticleWithoutImage(doc.id);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             }).toList(),
@@ -96,6 +114,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFFEC407A),
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(
@@ -167,41 +186,72 @@ class _AddArticleScreenState extends State<AddArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Article'),
+        title: Text('Tambah Artikel'),
+        backgroundColor: Color(0xFFEC407A),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a title';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a description';
-                }
-                return null;
-              },
-            ),
-            ElevatedButton(
-              child: Text('Choose Image'),
-              onPressed: _pickImage,
-            ),
-            ElevatedButton(
-              child: Text('Submit'),
-              onPressed: _submit,
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'Judul',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Masukkan Judul';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: _descriptionController,
+                maxLines: 5, // Tinggi textarea berdasarkan jumlah baris
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: 'Deskripsi',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Masukkan deskripsi';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                child: Text('Pilih Gambar'),
+                onPressed: _pickImage,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  minimumSize: const Size(350, 50),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(
+                  primary: const Color(0xFFEC407A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  minimumSize: const Size(350, 55),
+                ),
+                child: Text(
+                  'Kirim',
+                  style: GoogleFonts.inter(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -288,41 +338,72 @@ class _UpdateArticleScreenState extends State<UpdateArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Article'),
+        title: Text('Perbarui Artikel'),
+        backgroundColor: Color(0xFFEC407A),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a title';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a description';
-                }
-                return null;
-              },
-            ),
-            ElevatedButton(
-              child: Text('Choose Image'),
-              onPressed: _pickImage,
-            ),
-            ElevatedButton(
-              child: Text('Submit'),
-              onPressed: _submit,
-            ),
-          ],
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'Judul',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Masukkan Judul';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: _descriptionController,
+                maxLines: 5, // Tinggi textarea berdasarkan jumlah baris
+                keyboardType: TextInputType.multiline,
+                decoration: InputDecoration(
+                  labelText: 'Deskripsi',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Masukkan deskripsi';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                child: Text('Pilih Gambar'),
+                onPressed: _pickImage,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  minimumSize: const Size(350, 50),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(
+                  primary: const Color(0xFFEC407A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  minimumSize: const Size(350, 55),
+                ),
+                child: Text(
+                  'Kirim',
+                  style: GoogleFonts.inter(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
