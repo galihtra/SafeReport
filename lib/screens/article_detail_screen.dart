@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe_report/model/Article.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share/share.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   final Article article;
@@ -15,6 +16,14 @@ class ArticleDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0, // Menghilangkan shadow
         title: Text(''), // Menghilangkan teks
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {
+              Share.share('${article.title}\n\n${article.description}');
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
