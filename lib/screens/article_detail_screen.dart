@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safe_report/model/Article.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   final Article article;
@@ -9,33 +10,55 @@ class ArticleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // Memastikan body berada dibelakang AppBar
       appBar: AppBar(
-        title: Text(article.title),
+        backgroundColor: Colors.transparent,
+        elevation: 0, // Menghilangkan shadow
+        title: Text(''), // Menghilangkan teks
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Image.network(article.imageUrl),
-              SizedBox(height: 20.0),
-              Text(
-                article.title,
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 330.0,
+              width: MediaQuery.of(context)
+                  .size
+                  .width, // Lebar sesuai ukuran layar
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(article.imageUrl),
+                  fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 10.0),
-              Text(
-                article.description,
-                style: TextStyle(
-                  fontSize: 16.0,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(height: 20.0),
+                  Text(
+                    article.title,
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFEC407A),
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Text(
+                    article.description,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Color(0xFF8C8A8A),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

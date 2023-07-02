@@ -457,27 +457,86 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    "Informasi dan Berita",
-                    style: GoogleFonts.inter(
-                        fontSize: 18, fontWeight: FontWeight.w500),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            15.0), // menambahkan padding horizontal sebesar 10
+                    child: Text(
+                      "Informasi dan Berita",
+                      style: GoogleFonts.inter(
+                          fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
                   ),
                   Expanded(
                     child: ListView.builder(
                       itemCount: articles.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Image.network(articles[index].imageUrl),
-                          title: Text(articles[index].title),
-                          subtitle: Text(articles[index].description),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ArticleDetailScreen(
-                                    article: articles[index]),
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 10.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ArticleDetailScreen(
+                                      article: articles[index]),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(
+                                    0.5), // Atur transparansi disini
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            );
-                          },
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 20.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Container(
+                                        height: 150.0,
+                                        width: 320.0,
+                                        child: Image.network(
+                                          articles[index].imageUrl,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    contentPadding: EdgeInsets.only(
+                                        left: 20.0,
+                                        right: 20.0,
+                                        bottom: 20.0,
+                                        top: 15.0),
+                                    title: Text(
+                                      articles[index].title.length > 150
+                                          ? articles[index]
+                                                  .title
+                                                  .substring(0, 150) +
+                                              '...'
+                                          : articles[index].title,
+                                      style: GoogleFonts.inter(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      articles[index].description.length > 150
+                                          ? articles[index]
+                                                  .description
+                                                  .substring(0, 150) +
+                                              '...'
+                                          : articles[index].description,
+                                      style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         );
                       },
                     ),
