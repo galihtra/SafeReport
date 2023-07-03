@@ -3,10 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:safe_report/screens/article_detail_screen.dart';
+import 'package:safe_report/model/Article.dart';
 
-class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({Key? key}) : super(key: key);
+class AdminHomeScreen extends StatefulWidget {
+  @override
+  _AdminHomeScreenState createState() => _AdminHomeScreenState();
+}
 
+class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Future<DocumentSnapshot> getUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -14,6 +19,32 @@ class AdminHomeScreen extends StatelessWidget {
     } else {
       throw ("No user logged in");
     }
+  }
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Article> articles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchArticles();
+  }
+
+  void fetchArticles() async {
+    final QuerySnapshot snapshot =
+        await _firestore.collection('articles').get();
+
+    setState(() {
+      articles = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return Article(
+          title: data['title'] ?? "No title",
+          description: data['description'] ?? "No description",
+          imageUrl: data['image_url'] ??
+              "https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80",
+        );
+      }).toList();
+    });
   }
 
   @override
@@ -280,9 +311,7 @@ class AdminHomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
+                  SizedBox(height: 30),
                   // Kontak Darurat
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 10),
@@ -297,11 +326,9 @@ class AdminHomeScreen extends StatelessWidget {
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // Rumah Sakit
                                     GestureDetector(
                                       onTap: () {
-                                        launch(
-                                            "tel://0778431777"); // Ganti nomor telepon dengan nomor rumah sakit
+                                        launch("tel://0778431777");
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -329,11 +356,9 @@ class AdminHomeScreen extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 20),
-                                    // Pemadam Kebakaran
                                     GestureDetector(
                                       onTap: () {
-                                        launch(
-                                            "tel:0778371560"); // Ganti nomor telepon dengan nomor pemadam kebakaran
+                                        launch("tel:0778371560");
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -361,11 +386,9 @@ class AdminHomeScreen extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 20),
-                                    // Kantor Polisi
                                     GestureDetector(
                                       onTap: () {
-                                        launch(
-                                            "tel://112"); // Ganti nomor telepon dengan nomor kantor polisi
+                                        launch("tel://112");
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -403,11 +426,10 @@ class AdminHomeScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           side: BorderSide(
-                            color: Colors.red, // Warna border merah
+                            color: Colors.red,
                             width: 2,
                           ),
-                          minimumSize: Size(double.infinity,
-                              55), // Lebar menyesuaikan ukuran perangkat
+                          minimumSize: Size(double.infinity, 55),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -431,9 +453,93 @@ class AdminHomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // List Article
+                  // Article
                   SizedBox(
                     height: 20,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            15.0), // menambahkan padding horizontal sebesar 10
+                    child: Text(
+                      "Informasi dan Berita",
+                      style: GoogleFonts.inter(
+                          fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: articles.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 10.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ArticleDetailScreen(
+                                      article: articles[index]),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(
+                                    0.5), // Atur transparansi disini
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(top: 20.0),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Container(
+                                        height: 150.0,
+                                        width: 320.0,
+                                        child: Image.network(
+                                          articles[index].imageUrl,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    contentPadding: EdgeInsets.only(
+                                        left: 20.0,
+                                        right: 20.0,
+                                        bottom: 20.0,
+                                        top: 15.0),
+                                    title: Text(
+                                      articles[index].title.length > 150
+                                          ? articles[index]
+                                                  .title
+                                                  .substring(0, 150) +
+                                              '...'
+                                          : articles[index].title,
+                                      style: GoogleFonts.inter(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                      articles[index].description.length > 150
+                                          ? articles[index]
+                                                  .description
+                                                  .substring(0, 150) +
+                                              '...'
+                                          : articles[index].description,
+                                      style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
