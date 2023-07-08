@@ -47,6 +47,7 @@ dependencies:
   flutter_icons: ^1.1.0
   url_launcher: ^6.0.10
   share: ^2.0.4
+  date_time_picker: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +96,7 @@ flutter:
     - assets/images/article_active.png
     - assets/images/profile_bg.png
     - assets/images/camera.png
+    - assets/images/tambah.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
