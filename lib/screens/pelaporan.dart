@@ -88,7 +88,7 @@ class _PelaporanFormState extends State<PelaporanForm> {
 
   final firebase_storage.FirebaseStorage _storage =
     firebase_storage.FirebaseStorage.instance;
-  void _submitForm() async {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       String? imageUrl;
       if (_pickedImage != null) {
@@ -101,49 +101,99 @@ class _PelaporanFormState extends State<PelaporanForm> {
     imageUrl = await snapshot.ref.getDownloadURL();
       }
 
-      final pelaporan = {
-        'nama': _namaController.text,
-        'nim': _nimController.text,
-        'gender': gender,
-        'jurusan': jurusan,
-        'prodi': prodi,
-        'kelas': kelas,
-        'no_telp': _noTelpController,
-        'jenis_kasus': jenisKasus,
-        'bentuk_kasus': bentukKasus,
-        'nama_pelaku': _namaPelakuController,
-        'gender_pelaku': genderPelaku,
-        'jurusan_pelaku': jurusanPelaku,
-        'prodi_pelaku': prodiPelaku,
-        'kelas_pelaku': kelasPelaku,
-        'no_telp_pelaku': _noTelpPelakuController,
-        'deskripsi_pelaku': _deskripsiPelakuController,
-        'tanggal_kejadian': _tanggalKejadianController,
-        'tempat_kejadian': _tempatKejadianController,
-        'kronologi_kejadian': _kronologiKejadianController,
-        'bukti_pendukung': imageUrl,
-        'nama_saksi': _namaSaksiController,
-        'no_telp_saksi': _noTelpSaksiController,
-        'keterangan_saksi': _keteranganSaksiController
-      };
-      
-      // Save data to Firestore
-      FirebaseFirestore.instance
-          .collection('report')
-          .add(pelaporan)
-          .then((value) {
-        // Reset form
-        _formKey.currentState!.reset();
+      if (_formKey.currentState!.validate()) {
+      try {
+        final formData = {
+          'nama': _namaController.text,
+          'nim': _nimController.text,
+          'noTelp': _noTelpController.text,
+          'namaPelaku': _namaPelakuController.text,
+          'noTelpPelaku': _noTelpPelakuController.text,
+          'deskripsiPelaku': _deskripsiPelakuController.text,
+          'tanggalKejadian': _tanggalKejadianController.text,
+          'tempatKejadian': _tempatKejadianController.text,
+          'kronologiKejadian': _kronologiKejadianController.text,
+          'namaSaksi': _namaSaksiController.text,
+          'noTelpSaksi': _noTelpSaksiController.text,
+          'keteranganSaksi': _keteranganSaksiController.text,
+          'gender': gender,
+          'jurusan': jurusan,
+          'prodi': prodi,
+          'kelas': kelas,
+          'jenisKasus': jenisKasus,
+          'bentukKasus': bentukKasus,
+          'genderPelaku': genderPelaku,
+          'jurusanPelaku': jurusanPelaku,
+          'prodiPelaku': prodiPelaku,
+          'kelasPelaku': kelasPelaku,
+          'bukti_pendukung':imageUrl
+        };
 
-        // Navigate to another page
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ReportSuccess()),
+        final firestore = FirebaseFirestore.instance;
+        await firestore.collection('report').add(formData);
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Success'),
+              content: Text('Form data has been successfully submitted.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
         );
-      }).catchError((error) {
-        // Handle error
-        print('Error: $error');
-      });
+
+        _namaController.clear();
+        _nimController.clear();
+        _noTelpController.clear();
+        _namaPelakuController.clear();
+        _noTelpPelakuController.clear();
+        _deskripsiPelakuController.clear();
+        _tanggalKejadianController.clear();
+        _tempatKejadianController.clear();
+        _kronologiKejadianController.clear();
+        _namaSaksiController.clear();
+        _noTelpSaksiController.clear();
+        _keteranganSaksiController.clear();
+        setState(() {
+          gender = 'Perempuan';
+          jurusan = null;
+          prodi = null;
+          kelas = null;
+          jenisKasus = null;
+          bentukKasus = null;
+          genderPelaku = 'Laki-laki';
+          jurusanPelaku = null;
+          prodiPelaku = null;
+          kelasPelaku = null;
+        });
+      } catch (error) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('An error occurred while submitting the form. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReportSuccess()));
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+          );
+        }
+      }
     }
   }
 
