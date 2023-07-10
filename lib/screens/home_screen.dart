@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
 import 'package:safe_report/screens/pelaporan.dart';
+import 'package:safe_report/screens/pendampingan.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -54,9 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
       future: getUserData(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic>? data =
+              snapshot.data?.data() as Map<String, dynamic>?;
           return Scaffold(
             body: ListView(
               children: <Widget>[
@@ -69,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (data['image_url'] != null)
+                          if (data != null && data['image_url'] != null)
                             CircleAvatar(
                               backgroundImage: NetworkImage(data['image_url']),
                               radius: 22,
@@ -77,7 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           else
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage: AssetImage('assets/images/default_avatar.png'),
+                              backgroundImage: AssetImage(
+                                  'assets/images/default_avatar.png'),
                               radius: 22,
                             ),
                           Spacer(),
@@ -101,7 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      data['name'] ?? '',
+                                      (data != null && data.containsKey('name'))
+                                          ? data['name']
+                                          : '',
                                       style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -132,7 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Colors.red,
-                                    child: Image.asset("assets/images/rescue_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/rescue_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -147,28 +154,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           // Pendampingan
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  width: 75,
-                                  height: 75,
-                                  color: Color(0xFFF4E8EA),
-                                  child: Image.asset("assets/images/pendampingan_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Pendampingan()),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    width: 75,
+                                    height: 75,
+                                    color: Color(0xFFF4E8EA),
+                                    child: Image.asset(
+                                        "assets/images/pendampingan_logo.png"),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Pendampingan",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFF9D9D9D),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Pendampingan",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF9D9D9D),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           // Konsultasi Online
                           Padding(
@@ -184,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/konsultasi_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/konsultasi_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -230,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/edukasi_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/edukasi_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -255,7 +274,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: 75,
                                   height: 75,
                                   color: Color(0xFFF4E8EA),
-                                  child: Image.asset("assets/images/kampanye_logo.png"),
+                                  child: Image.asset(
+                                      "assets/images/kampanye_logo.png"),
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -269,30 +289,41 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           // Pelaporan
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/pelaporan_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PelaporanForm()),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Color(0xFFF4E8EA),
+                                      child: Image.asset(
+                                          "assets/images/pelaporan_logo.png"),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Pelaporan",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF9D9D9D),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Pelaporan",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF9D9D9D),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -322,13 +353,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/rs.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/rs.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Rumah Sakit',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -351,13 +384,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/pemadam.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/pemadam.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Pemadam Kebakaran',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -380,13 +415,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/polisi.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/polisi.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Kantor Polisi',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -458,7 +495,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ArticleDetailScreen(article: articles[index]),
+                                      builder: (context) => ArticleDetailScreen(
+                                          article: articles[index]),
                                     ),
                                   );
                                 },
@@ -472,7 +510,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Container(
                                         margin: EdgeInsets.only(top: 20.0),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
                                           child: Container(
                                             height: 150.0,
                                             width: 320.0,
@@ -492,7 +531,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         title: Text(
                                           articles[index].title.length > 150
-                                              ? articles[index].title.substring(0, 150) + '...'
+                                              ? articles[index]
+                                                      .title
+                                                      .substring(0, 150) +
+                                                  '...'
                                               : articles[index].title,
                                           style: GoogleFonts.inter(
                                             fontSize: 18,
@@ -500,8 +542,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         subtitle: Text(
-                                          articles[index].description.length > 150
-                                              ? articles[index].description.substring(0, 150) + '...'
+                                          articles[index].description.length >
+                                                  150
+                                              ? articles[index]
+                                                      .description
+                                                      .substring(0, 150) +
+                                                  '...'
                                               : articles[index].description,
                                           style: GoogleFonts.inter(
                                             fontSize: 14,
