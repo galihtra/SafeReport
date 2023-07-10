@@ -58,8 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data =
-              snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic>? data =
+              snapshot.data?.data() as Map<String, dynamic>?;
           return Scaffold(
             body: ListView(
               children: <Widget>[
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (data['image_url'] != null)
+                          if (data != null && data['image_url'] != null)
                             CircleAvatar(
                               backgroundImage: NetworkImage(data['image_url']),
                               radius: 22,
@@ -105,7 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                     Text(
-                                      data['name'] ?? '',
+                                      (data != null && data.containsKey('name'))
+                                          ? data['name']
+                                          : '',
                                       style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,

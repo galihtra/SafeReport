@@ -12,7 +12,9 @@ class _AddAdminState extends State<AddAdmin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _noTelpController = TextEditingController();
   String _selectedGender = 'Pria'; // Default gender value
+  String _selectProdi = 'Teknik Informatika';
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -37,6 +39,8 @@ class _AddAdminState extends State<AddAdmin> {
         'email': _emailController.text,
         'name': _fullNameController.text,
         'gender': _selectedGender,
+        'prodi': _selectProdi,
+        'no_telp':_noTelpController.text,
       });
 
       _showNotification('Relawan berhasil ditambahkan');
@@ -95,6 +99,13 @@ class _AddAdminState extends State<AddAdmin> {
                 obscureText: true,
               ),
               SizedBox(height: 16.0),
+              TextField(
+                controller: _noTelpController,
+                decoration: InputDecoration(
+                  labelText: 'No HandPhone',
+                ),
+              ),
+              SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: _selectedGender,
                 items: <String>['Pria', 'Wanita']
@@ -116,6 +127,27 @@ class _AddAdminState extends State<AddAdmin> {
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedGender = newValue!;
+                  });
+                },
+                decoration: InputDecoration(
+                  labelText: 'Gender',
+                ),
+              ),
+              SizedBox(height: 16.0),
+              DropdownButtonFormField<String>(
+                value: _selectProdi,
+                items: <String>['Teknik Informatika', 'Teknik Elektro', 'Geomatika', 'Akuntansi Manajemen', 'Rekayasa Keamanan Siber', 'Rekayasa Perangkat Lunak', 'Multimedia & Jaringan', 'Manajemen Bisnis', 'Teknik Mesin']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                        value,
+                      ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectProdi = newValue!;
                   });
                 },
                 decoration: InputDecoration(

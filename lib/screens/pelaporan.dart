@@ -141,7 +141,7 @@ class _PelaporanFormState extends State<PelaporanForm> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReportSuccess()));
                   },
                   child: Text('OK'),
                 ),
@@ -181,14 +181,6 @@ class _PelaporanFormState extends State<PelaporanForm> {
             return AlertDialog(
               title: Text('Error'),
               content: Text('An error occurred while submitting the form. Please try again.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReportSuccess()));
-                  },
-                  child: Text('OK'),
-                ),
-              ],
             );
           },
           );

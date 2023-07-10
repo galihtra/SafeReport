@@ -27,7 +27,7 @@ class SplashScreen extends StatelessWidget {
         .doc(user.uid)
         .get();
 
-      bool isAdmin = userSnapshot.data()!['isAdmin'] ?? false;
+      bool isAdmin = userSnapshot.data()?['isAdmin'] ?? false;
       if (isAdmin) {
         // Navigate to the admin home screen
         Get.offAll(() => AdminNavigationBar());
