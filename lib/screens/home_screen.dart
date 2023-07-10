@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
 import 'package:safe_report/screens/pelaporan.dart';
+import 'package:safe_report/screens/pendampingan.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -151,29 +152,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           // Pendampingan
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  width: 75,
-                                  height: 75,
-                                  color: Color(0xFFF4E8EA),
-                                  child: Image.asset(
-                                      "assets/images/pendampingan_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Pendampingan()),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    width: 75,
+                                    height: 75,
+                                    color: Color(0xFFF4E8EA),
+                                    child: Image.asset(
+                                        "assets/images/pendampingan_logo.png"),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Pendampingan",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFF9D9D9D),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Pendampingan",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF9D9D9D),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           // Konsultasi Online
                           Padding(
@@ -277,18 +287,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           // Pelaporan
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: GestureDetector(
-                              onTap: () {
-                                // Perform navigation to a different page here
-                                // For example, you can use Navigator.push() to navigate to a new route.
-                                // Replace `NewPage()` with the desired page widget you want to navigate to.
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PelaporanForm()));
-                              },
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PelaporanForm()),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
