@@ -40,7 +40,7 @@ class _AddAdminState extends State<AddAdmin> {
         'name': _fullNameController.text,
         'gender': _selectedGender,
         'prodi': _selectProdi,
-        'no_telp':_noTelpController.text,
+        'no_telp': _noTelpController.text,
       });
 
       _showNotification('Relawan berhasil ditambahkan');
@@ -67,7 +67,7 @@ class _AddAdminState extends State<AddAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Admin'),
+        title: Text('Menambah Relawan'),
         backgroundColor: Color(0xFFEC407A),
         elevation: 0,
       ),
@@ -136,13 +136,22 @@ class _AddAdminState extends State<AddAdmin> {
               SizedBox(height: 16.0),
               DropdownButtonFormField<String>(
                 value: _selectProdi,
-                items: <String>['Teknik Informatika', 'Teknik Elektro', 'Geomatika', 'Akuntansi Manajemen', 'Rekayasa Keamanan Siber', 'Rekayasa Perangkat Lunak', 'Multimedia & Jaringan', 'Manajemen Bisnis', 'Teknik Mesin']
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: <String>[
+                  'Teknik Informatika',
+                  'Teknik Elektro',
+                  'Geomatika',
+                  'Akuntansi Manajemen',
+                  'Rekayasa Keamanan Siber',
+                  'Rekayasa Perangkat Lunak',
+                  'Multimedia & Jaringan',
+                  'Manajemen Bisnis',
+                  'Teknik Mesin'
+                ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(
-                        value,
-                      ),
+                      value,
+                    ),
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
@@ -151,7 +160,7 @@ class _AddAdminState extends State<AddAdmin> {
                   });
                 },
                 decoration: InputDecoration(
-                  labelText: 'Gender',
+                  labelText: 'Prodi',
                 ),
               ),
               SizedBox(height: 16.0),
@@ -163,9 +172,18 @@ class _AddAdminState extends State<AddAdmin> {
                   ),
                 ),
               SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _addAdmin,
-                child: Text('Add'),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _addAdmin,
+                  child: Text('Tambah'),
+                  style: ElevatedButton.styleFrom(
+                    primary: const Color(0xFFEC407A),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    minimumSize: const Size(350, 55),
+                  ),
+                ),
               ),
             ],
           ),

@@ -37,39 +37,70 @@ class _PendampinganState extends State<Pendampingan> {
             );
           }
 
-          return ListView(
-            children: snapshot.data!.docs.map((doc) {
-              Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-              return ListTile(
-                leading: (data['image_url'] != null)
-                    ? CircleAvatar(
-                        radius:
-                            25, // Setengah dari ukuran yang Anda inginkan (50/2)
-                        backgroundImage: NetworkImage(data['image_url']),
-                      )
-                    : CircleAvatar(
-                        radius:
-                            25, // Setengah dari ukuran yang Anda inginkan (50/2)
-                        child: Icon(Icons.person),
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ListView(
+              children: snapshot.data!.docs.map((doc) {
+                Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                return ListTile(
+                  leading: (data['image_url'] != null)
+                      ? CircleAvatar(
+                          radius:
+                              25, // Setengah dari ukuran yang diinginkan (50/2)
+                          backgroundImage: NetworkImage(data['image_url']),
+                        )
+                      : CircleAvatar(
+                          radius:
+                              25, // Setengah dari ukuran yang diinginkan(50/2)
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                          backgroundColor: Color(0xFFEC407A),
+                        ),
+                  title: Padding(
+                    padding: EdgeInsets.only(bottom: 1),
+                    child: Text(
+                      data['name'] ?? '',
+                      style: GoogleFonts.poppins(
+                          fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          data['gender'] ?? '',
+                          style: GoogleFonts.poppins(
+                              fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
                       ),
-                title: Padding(
-                  padding: EdgeInsets.only(bottom: 3),
-                  child: Text(
-                    data['name'] ?? '',
-                    style: GoogleFonts.poppins(
-                        fontSize: 16, fontWeight: FontWeight.w500),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          '(${data['prodi'] ?? ''})',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xFF98A2B3),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                subtitle: Padding(
-                  padding: EdgeInsets.only(bottom: 3),
-                  child: Text(
-                    data['gender'] ?? '',
-                    style: GoogleFonts.poppins(
-                        fontSize: 12, fontWeight: FontWeight.w500),
+                  trailing: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey,
+                      size: 14,
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           );
         },
       ),
