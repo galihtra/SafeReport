@@ -7,7 +7,10 @@ import 'package:safe_report/screens/notifications_screen.dart';
 import 'package:safe_report/screens/profile_screen.dart';
 
 class BarNavigation extends StatefulWidget {
-  const BarNavigation({Key? key}) : super(key: key);
+  final int currentIndex;
+
+  BarNavigation({required this.currentIndex});
+
 
   @override
   _NavigationBar createState() => _NavigationBar();
@@ -25,6 +28,12 @@ class BarNavigation extends StatefulWidget {
 class _NavigationBar extends State<BarNavigation> {
   int _currentIndex = 0;
   final pages = [HomeScreen(), Status(), Notifications(), Profile()];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.currentIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

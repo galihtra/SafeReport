@@ -18,6 +18,7 @@ class _AddAdminState extends State<AddAdmin> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+
   String _errorMessage = '';
 
   void _addAdmin() async {
