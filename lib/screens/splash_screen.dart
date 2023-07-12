@@ -33,7 +33,7 @@ class SplashScreen extends StatelessWidget {
         Get.offAll(() => AdminNavigationBar());
       } else {
         // Navigate to the user home screen
-        Get.offAll(() => BarNavigation());
+        Get.offAll(() => BarNavigation(currentIndex: 0,));
       }
     } else {
       // No user logged in, navigate to the sign-in screen

@@ -152,7 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => BarNavigation()),
+                                  builder: (context) => BarNavigation(currentIndex: 0,)),
                             );
                           }
                         } catch (error) {
