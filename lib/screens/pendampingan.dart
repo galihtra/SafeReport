@@ -124,6 +124,7 @@ class DetailPendamping extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -131,45 +132,90 @@ class DetailPendamping extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: 300.0,
-              width: MediaQuery.of(context)
-                  .size
-                  .width, // Lebar sesuai ukuran layar
+      body: Stack(
+        children: [
+          Container(
+            height: size.height * 0.40,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: (data['image_url'] != null)
+                    ? NetworkImage(data['image_url'])
+                    : AssetImage('assets/images/default_avatar.png')
+                        as ImageProvider,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: size.height * 0.67,
+              width: size.width,
+              margin: EdgeInsets.only(top: size.height * 0.3),
+              padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: (data['image_url'] != null)
-                      ? NetworkImage(data['image_url'])
-                      : AssetImage('assets/images/default_avatar.png')
-                          as ImageProvider,
-                  fit: BoxFit.cover,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 10,
+                    blurRadius: 10,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              data['name'] ?? '',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              data['gender'] ?? '',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              '(${data['prodi'] ?? ''})',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF98A2B3),
+              // Detail
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          data['name'] ?? '',
+                          style: GoogleFonts.inter(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257)),
+                        ),
+                      ),
+                      Text(
+                        data['gender'] ?? '',
+                        style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF667085)),
+                        textAlign: TextAlign.right,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    data['bio'] ?? '',
+                    style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF667085)),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Jadwal',
+                    style: GoogleFonts.inter(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF263257)),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
