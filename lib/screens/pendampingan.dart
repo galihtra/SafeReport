@@ -138,7 +138,7 @@ class DetailPendamping extends StatelessWidget {
           child: Stack(
             children: [
               Container(
-                height: size.height * 0.40,
+                height: size.height * 0.35,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -153,7 +153,7 @@ class DetailPendamping extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: size.height * 0.67,
+                  height: size.height * 0.75,
                   width: size.width,
                   margin: EdgeInsets.only(top: size.height * 0.3),
                   padding: EdgeInsets.all(20),
