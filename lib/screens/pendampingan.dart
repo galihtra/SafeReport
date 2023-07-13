@@ -132,90 +132,228 @@ class DetailPendamping extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: Stack(
-        children: [
-          Container(
-            height: size.height * 0.40,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: (data['image_url'] != null)
-                    ? NetworkImage(data['image_url'])
-                    : AssetImage('assets/images/default_avatar.png')
-                        as ImageProvider,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: size.height * 0.67,
-              width: size.width,
-              margin: EdgeInsets.only(top: size.height * 0.3),
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 10,
-                    blurRadius: 10,
-                    offset: Offset(0, 0),
+      body: SingleChildScrollView(
+        child: Container(
+          height: size.height,
+          child: Stack(
+            children: [
+              Container(
+                height: size.height * 0.40,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: (data['image_url'] != null)
+                        ? NetworkImage(data['image_url'])
+                        : AssetImage('assets/images/default_avatar.png')
+                            as ImageProvider,
+                    fit: BoxFit.cover,
                   ),
-                ],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
                 ),
               ),
-              // Detail
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          data['name'] ?? '',
-                          style: GoogleFonts.inter(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF263257)),
-                        ),
-                      ),
-                      Text(
-                        data['gender'] ?? '',
-                        style: GoogleFonts.inter(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF667085)),
-                        textAlign: TextAlign.right,
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: size.height * 0.67,
+                  width: size.width,
+                  margin: EdgeInsets.only(top: size.height * 0.3),
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 10,
+                        blurRadius: 10,
+                        offset: Offset(0, 0),
                       ),
                     ],
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25),
+                    ),
                   ),
-                  const SizedBox(height: 15),
-                  Text(
-                    data['bio'] ?? '',
-                    style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        color: Color(0xFF667085)),
+                  // Detail
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                data['name'] ?? '',
+                                style: GoogleFonts.inter(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF263257)),
+                              ),
+                            ),
+                            Text(
+                              data['gender'] ?? '',
+                              style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF667085)),
+                              textAlign: TextAlign.right,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          data['bio'] ?? '',
+                          style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xFF667085)),
+                        ),
+                        const SizedBox(height: 20),
+                        // Jadwal
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                'Jadwal',
+                                style: GoogleFonts.inter(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF263257)),
+                              ),
+                            ),
+                            Text(
+                              'Agustus',
+                              style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF667085)),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                width: 65,
+                                height: 70,
+                                color: Color(0xFFEC407A),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "7",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Sen",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Jam
+                        const SizedBox(height: 20),
+                        Text(
+                          'Jam',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF263257),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Container(
+                                width: 85,
+                                height: 45,
+                                color: Color(0xFFEC407A),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "12:00",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Detail Tempat',
+                          style: GoogleFonts.inter(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF263257),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan detail tempat',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              primary: const Color(0xFFEC407A),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              minimumSize: const Size(350, 55),
+                            ),
+                            child: Text(
+                              'BUAT JANJI TEMU',
+                              style: GoogleFonts.inter(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Jadwal',
-                    style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF263257)),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
