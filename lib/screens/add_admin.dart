@@ -44,12 +44,19 @@ class _AddAdminState extends State<AddAdmin> {
       });
 
       _showNotification('Relawan berhasil ditambahkan');
-      Navigator.pop(context);
-      // Close the AddAdmin screen after adding admin
+      // Clear the text fields after adding admin
+      _fullNameController.clear();
+      _emailController.clear();
+      _passwordController.clear();
+      _noTelpController.clear();
+      setState(() {
+        _selectedGender = 'Pria';
+        _selectProdi = 'Teknik Informatika';
+      });
     } catch (error) {
       print('Error adding admin: $error');
       setState(() {
-        _errorMessage = 'Failed to add admin. Please try again later.';
+        _errorMessage = 'Gagal menambahkan relawan. Silakan coba lagi.';
       });
     }
   }
