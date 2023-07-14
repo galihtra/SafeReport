@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
+import 'package:safe_report/model/Appointment.dart';
 
 class Pendampingan extends StatefulWidget {
   const Pendampingan({Key? key}) : super(key: key);
@@ -36,7 +40,6 @@ class _PendampinganState extends State<Pendampingan> {
               child: CircularProgressIndicator(),
             );
           }
-
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: ListView(
@@ -117,10 +120,41 @@ class _PendampinganState extends State<Pendampingan> {
   }
 }
 
-class DetailPendamping extends StatelessWidget {
+// Detail Pendamping
+class DetailPendamping extends StatefulWidget {
   final Map<String, dynamic> data;
 
   const DetailPendamping({required this.data});
+
+  @override
+  _DetailPendampingState createState() => _DetailPendampingState();
+}
+
+class _DetailPendampingState extends State<DetailPendamping> {
+  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedTime = DateTime.now();
+  final TextEditingController locationDetailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<String> getCompanionId() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('isAdmin', isEqualTo: true)
+        .get();
+
+    final documents = querySnapshot.docs;
+    if (documents.isNotEmpty) {
+      return documents.first.id; // id of the first admin user found
+    }
+
+    throw Exception('No admin user found');
+  }
+
+  Future<void> createAppointment(AppointmentModel appointment) {
+    return FirebaseFirestore.instance
+        .collection('appointments')
+        .add(appointment.toMap());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,8 +176,8 @@ class DetailPendamping extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: (data['image_url'] != null)
-                        ? NetworkImage(data['image_url'])
+                    image: (widget.data['image_url'] != null)
+                        ? NetworkImage(widget.data['image_url'])
                         : AssetImage('assets/images/default_avatar.png')
                             as ImageProvider,
                     fit: BoxFit.cover,
@@ -172,7 +206,6 @@ class DetailPendamping extends StatelessWidget {
                       topRight: Radius.circular(25),
                     ),
                   ),
-                  // Detail
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +215,7 @@ class DetailPendamping extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               child: Text(
-                                data['name'] ?? '',
+                                widget.data['name'] ?? '',
                                 style: GoogleFonts.inter(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w500,
@@ -190,7 +223,7 @@ class DetailPendamping extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              data['gender'] ?? '',
+                              widget.data['gender'] ?? '',
                               style: GoogleFonts.inter(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -201,7 +234,7 @@ class DetailPendamping extends StatelessWidget {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          data['bio'] ?? '',
+                          widget.data['bio'] ?? '',
                           style: GoogleFonts.inter(
                               fontSize: 14,
                               fontWeight: FontWeight.normal,
@@ -209,71 +242,28 @@ class DetailPendamping extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         // Jadwal
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(
-                                'Jadwal',
-                                style: GoogleFonts.inter(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF263257)),
-                              ),
-                            ),
-                            Text(
-                              'Agustus',
-                              style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF667085)),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.black,
-                              size: 16,
-                            ),
-                          ],
+                        Text(
+                          'Jadwal',
+                          style: GoogleFonts.inter(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257)),
                         ),
                         const SizedBox(height: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                width: 65,
-                                height: 70,
-                                color: Color(0xFFEC407A),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "7",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Sen",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        DatePicker(
+                          DateTime.now(),
+                          initialSelectedDate: DateTime.now(),
+                          selectionColor: Color(0xFFEC407A),
+                          selectedTextColor: Colors.white,
+                          onDateChange: (date) {
+                            // New date selected
+                            setState(() {
+                              _selectedDate = date;
+                            });
+                          },
                         ),
-                        // Jam
                         const SizedBox(height: 20),
+                        // Jam
                         Text(
                           'Jam',
                           style: GoogleFonts.inter(
@@ -282,35 +272,20 @@ class DetailPendamping extends StatelessWidget {
                             color: Color(0xFF263257),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Container(
-                                width: 85,
-                                height: 45,
-                                color: Color(0xFFEC407A),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "12:00",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        TimePickerSpinner(
+                          is24HourMode: false,
+                          normalTextStyle:
+                              TextStyle(fontSize: 24, color: Colors.grey),
+                          highlightedTextStyle:
+                              TextStyle(fontSize: 24, color: Color(0xFFEC407A)),
+                          spacing: 50,
+                          itemHeight: 80,
+                          isForce2Digits: true,
+                          onTimeChange: (time) {
+                            setState(() {
+                              _selectedTime = time;
+                            });
+                          },
                         ),
                         const SizedBox(height: 20),
                         Text(
@@ -323,6 +298,7 @@ class DetailPendamping extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         TextField(
+                          controller: locationDetailController,
                           decoration: InputDecoration(
                             hintText: 'Masukkan detail tempat',
                             border: OutlineInputBorder(),
@@ -331,7 +307,25 @@ class DetailPendamping extends StatelessWidget {
                         const SizedBox(height: 20),
                         Center(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              final User? user = _auth.currentUser;
+                              final String userId = user != null ? user.uid : '';
+
+                              try {
+                                final companionId = await getCompanionId();
+                                final appointment = AppointmentModel(
+                                  userId: userId,
+                                  companionId: companionId,
+                                  date: DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute),
+                                  locationDetail: locationDetailController.text,
+                                );
+                                createAppointment(appointment)
+                                  .then((_) => print('Appointment created'))
+                                  .catchError((error) => print('Failed to create appointment: $error'));
+                              } catch (e) {
+                                print('Failed to get companionId: $e');
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               primary: const Color(0xFFEC407A),
                               shape: RoundedRectangleBorder(
