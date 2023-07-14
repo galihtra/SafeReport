@@ -13,6 +13,10 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  late final FirebaseAuth _auth;
+  late final User? _user;
+  late final String _companionId;
+
   Future<DocumentSnapshot> getUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -28,6 +32,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _auth = FirebaseAuth.instance;
+    _user = _auth.currentUser;
+
+    if (_user != null) {
+      _companionId = _user!.uid;
+    } else {
+      // handle this case where _user is null
+    }
     fetchArticles();
   }
 
@@ -154,7 +166,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AdminPendampingan()),
+                                    builder: (context) => AdminPendampingan(
+                                        companionId: _companionId)),
                               );
                             },
                             child: Column(

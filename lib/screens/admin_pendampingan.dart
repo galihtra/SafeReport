@@ -5,11 +5,13 @@ import 'package:safe_report/model/Appointment.dart';
 import 'package:safe_report/model/user_model.dart';
 
 class AdminPendampingan extends StatelessWidget {
-  const AdminPendampingan({Key? key}) : super(key: key);
+  final String companionId;
+
+  AdminPendampingan({Key? key, required this.companionId}) : super(key: key);
 
   Future<List<AppointmentModel>> getAppointments() async {
     final QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('appointments').get();
+        await FirebaseFirestore.instance.collection('appointments').where('companionId', isEqualTo: companionId).get();
 
     List<AppointmentModel> appointments =
         snapshot.docs.map<AppointmentModel>((doc) {
@@ -95,7 +97,10 @@ class AdminPendampingan extends StatelessWidget {
                         subtitle: Text(
                           'Janji temu: ${appointment.date} \nTempat: ${appointment.locationDetail}',
                         ),
-                        onTap: () => reschedule(context, appointment),
+                        trailing: IconButton(
+                          icon: Icon(Icons.schedule), //icon untuk reschedule
+                          onPressed: () => reschedule(context, appointment),
+                        ),
                       );
                     }
 
