@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:safe_report/model/Appointment.dart';
+import 'package:safe_report/model/user_model.dart';
 
 class Pendampingan extends StatefulWidget {
   const Pendampingan({Key? key}) : super(key: key);
@@ -44,22 +45,24 @@ class _PendampinganState extends State<Pendampingan> {
             padding: const EdgeInsets.all(10.0),
             child: ListView(
               children: snapshot.data!.docs.map((doc) {
-                Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                Map<String, dynamic> data =
+                    doc.data() as Map<String, dynamic>;
+                UserModel user = UserModel.fromMap(data);
                 return InkWell(
                   onTap: () {
                     // Navigasi ke halaman detail item
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailPendamping(data: data),
+                        builder: (context) => DetailPendamping(data: user),
                       ),
                     );
                   },
                   child: ListTile(
-                    leading: (data['image_url'] != null)
+                    leading: (user.image_url != null)
                         ? CircleAvatar(
                             radius: 25,
-                            backgroundImage: NetworkImage(data['image_url']),
+                            backgroundImage: NetworkImage(user.image_url!),
                           )
                         : CircleAvatar(
                             radius: 25,
@@ -72,7 +75,7 @@ class _PendampinganState extends State<Pendampingan> {
                     title: Padding(
                       padding: EdgeInsets.only(bottom: 1),
                       child: Text(
-                        data['name'] ?? '',
+                        user.name,
                         style: GoogleFonts.poppins(
                             fontSize: 16, fontWeight: FontWeight.w500),
                       ),
@@ -83,7 +86,7 @@ class _PendampinganState extends State<Pendampingan> {
                         Padding(
                           padding: EdgeInsets.only(bottom: 2),
                           child: Text(
-                            data['gender'] ?? '',
+                            user.gender,
                             style: GoogleFonts.poppins(
                                 fontSize: 14, fontWeight: FontWeight.w500),
                           ),
@@ -91,7 +94,7 @@ class _PendampinganState extends State<Pendampingan> {
                         Padding(
                           padding: EdgeInsets.only(bottom: 8),
                           child: Text(
-                            '(${data['prodi'] ?? ''})',
+                            '(${user.prodi ?? ''})',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.normal,
@@ -120,9 +123,9 @@ class _PendampinganState extends State<Pendampingan> {
   }
 }
 
-// Detail Pendamping
+// Detail Pendampingan
 class DetailPendamping extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final UserModel data;
 
   const DetailPendamping({required this.data});
 
@@ -140,21 +143,30 @@ class _DetailPendampingState extends State<DetailPendamping> {
   Future<String> getCompanionId() async {
     final querySnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .where('isAdmin', isEqualTo: true)
+        .where('name', isEqualTo: widget.data.name)
         .get();
 
     final documents = querySnapshot.docs;
     if (documents.isNotEmpty) {
-      return documents.first.id; // id of the first admin user found
+      return documents.first.id; // id of the first user found
     }
 
-    throw Exception('No admin user found');
+    throw Exception('No companion user found');
   }
 
-  Future<void> createAppointment(AppointmentModel appointment) {
-    return FirebaseFirestore.instance
-        .collection('appointments')
-        .add(appointment.toMap());
+  Future<void> createAppointment(AppointmentModel appointment) async {
+    final User? user = _auth.currentUser;
+    final String? userId = user?.uid;
+
+    if (userId != null) {
+      appointment.userId = userId;
+      appointment.companionId = await getCompanionId();
+      await FirebaseFirestore.instance
+          .collection('appointments')
+          .add(appointment.toMap());
+    } else {
+      throw Exception('No user found');
+    }
   }
 
   @override
@@ -177,10 +189,9 @@ class _DetailPendampingState extends State<DetailPendamping> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: (widget.data['image_url'] != null)
-                        ? NetworkImage(widget.data['image_url'])
-                        : AssetImage('assets/images/default_avatar.png')
-                            as ImageProvider,
+                    image: (widget.data.image_url != null)
+                        ? NetworkImage(widget.data.image_url!) as ImageProvider
+                        : AssetImage('assets/images/default_avatar.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -216,39 +227,43 @@ class _DetailPendampingState extends State<DetailPendamping> {
                           children: <Widget>[
                             Expanded(
                               child: Text(
-                                widget.data['name'] ?? '',
+                                widget.data.name,
                                 style: GoogleFonts.inter(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF263257)),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF263257),
+                                ),
                               ),
                             ),
                             Text(
-                              widget.data['gender'] ?? '',
+                              widget.data.gender,
                               style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF667085)),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF667085),
+                              ),
                               textAlign: TextAlign.right,
                             ),
                           ],
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          widget.data['bio'] ?? '',
+                          widget.data.bio ?? '',
                           style: GoogleFonts.inter(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              color: Color(0xFF667085)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xFF667085),
+                          ),
                         ),
                         const SizedBox(height: 20),
                         // Jadwal
                         Text(
                           'Jadwal',
                           style: GoogleFonts.inter(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF263257)),
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF263257),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         DatePicker(
@@ -309,29 +324,23 @@ class _DetailPendampingState extends State<DetailPendamping> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              final User? user = _auth.currentUser;
-                              final String userId =
-                                  user != null ? user.uid : '';
-
                               try {
-                                final companionId = await getCompanionId();
                                 final appointment = AppointmentModel(
-                                  userId: userId,
-                                  companionId: companionId,
+                                  userId: '',
+                                  companionId: '',
                                   date: DateTime(
-                                      _selectedDate.year,
-                                      _selectedDate.month,
-                                      _selectedDate.day,
-                                      _selectedTime.hour,
-                                      _selectedTime.minute),
+                                    _selectedDate.year,
+                                    _selectedDate.month,
+                                    _selectedDate.day,
+                                    _selectedTime.hour,
+                                    _selectedTime.minute,
+                                  ),
                                   locationDetail: locationDetailController.text,
                                 );
-                                createAppointment(appointment)
-                                    .then((_) => print('Appointment created'))
-                                    .catchError((error) => print(
-                                        'Failed to create appointment: $error'));
+                                await createAppointment(appointment);
+                                print('Appointment created');
                               } catch (e) {
-                                print('Failed to get companionId: $e');
+                                print('Failed to create appointment: $e');
                               }
                             },
                             style: ElevatedButton.styleFrom(
