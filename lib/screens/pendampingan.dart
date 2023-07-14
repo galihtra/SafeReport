@@ -133,7 +133,8 @@ class DetailPendamping extends StatefulWidget {
 class _DetailPendampingState extends State<DetailPendamping> {
   DateTime _selectedDate = DateTime.now();
   DateTime _selectedTime = DateTime.now();
-  final TextEditingController locationDetailController = TextEditingController();
+  final TextEditingController locationDetailController =
+      TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> getCompanionId() async {
@@ -309,19 +310,26 @@ class _DetailPendampingState extends State<DetailPendamping> {
                           child: ElevatedButton(
                             onPressed: () async {
                               final User? user = _auth.currentUser;
-                              final String userId = user != null ? user.uid : '';
+                              final String userId =
+                                  user != null ? user.uid : '';
 
                               try {
                                 final companionId = await getCompanionId();
                                 final appointment = AppointmentModel(
                                   userId: userId,
                                   companionId: companionId,
-                                  date: DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day, _selectedTime.hour, _selectedTime.minute),
+                                  date: DateTime(
+                                      _selectedDate.year,
+                                      _selectedDate.month,
+                                      _selectedDate.day,
+                                      _selectedTime.hour,
+                                      _selectedTime.minute),
                                   locationDetail: locationDetailController.text,
                                 );
                                 createAppointment(appointment)
-                                  .then((_) => print('Appointment created'))
-                                  .catchError((error) => print('Failed to create appointment: $error'));
+                                    .then((_) => print('Appointment created'))
+                                    .catchError((error) => print(
+                                        'Failed to create appointment: $error'));
                               } catch (e) {
                                 print('Failed to get companionId: $e');
                               }
