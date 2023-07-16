@@ -7,17 +7,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PendampinganNotif extends StatelessWidget {
+class PendampinganNotif extends StatefulWidget {
   final String? userId = FirebaseAuth.instance.currentUser?.uid;
 
   PendampinganNotif({Key? key}) : super(key: key);
 
+  @override
+  _PendampinganNotifState createState() => _PendampinganNotifState();
+}
+
+class _PendampinganNotifState extends State<PendampinganNotif> {
   Future<List<AppointmentModel>> getAppointments() async {
-    if (userId == null) throw Exception("User not logged in");
+    if (widget.userId == null) throw Exception("User not logged in");
 
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('appointments')
-        .where('userId', isEqualTo: userId)
+        .where('userId', isEqualTo: widget.userId)
         .get();
 
     List<AppointmentModel> appointments =
@@ -185,6 +190,37 @@ class PendampinganNotif extends StatelessWidget {
               .update({
             'date': newDateTime,
           });
+
+          // Menampilkan dialog berhasil mengubah jadwal
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                    ),
+                    SizedBox(width: 8.0),
+                    Text('Berhasil Mengubah Jadwal'),
+                  ],
+                ),
+                content: Text('Jadwal janji temu berhasil diubah.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+
+          // Refresh halaman setelah berhasil mengubah jadwal
+          setState(() {});
         }
       }
     }
@@ -197,7 +233,7 @@ class PendampinganNotif extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('User ID: $userId'); // Debug User ID
+    print('User ID: ${widget.userId}'); // Debug User ID
 
     return Scaffold(
       appBar: AppBar(
@@ -332,20 +368,22 @@ class PendampinganNotif extends StatelessWidget {
                                             DateFormat('HH:mm')
                                                 .format(appointment.date),
                                             style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: isExpired
-                                                    ? Colors.grey
-                                                    : Colors.red),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: isExpired
+                                                  ? Colors.grey
+                                                  : Colors.red,
+                                            ),
                                           ),
                                           Text(
                                             DateFormat('dd MMMM yyyy')
                                                 .format(appointment.date),
                                             style: TextStyle(
-                                                fontSize: 14,
-                                                color: isExpired
-                                                    ? Colors.grey
-                                                    : Colors.black),
+                                              fontSize: 14,
+                                              color: isExpired
+                                                  ? Colors.grey
+                                                  : Colors.black,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -378,62 +416,66 @@ class PendampinganNotif extends StatelessWidget {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            onPressed: () => reschedule(
-                                                context, appointment),
-                                            style: ElevatedButton.styleFrom(
-                                              primary: const Color(0xFFEC407A),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
+                                        if (!isExpired)
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () => reschedule(
+                                                  context, appointment),
+                                              style: ElevatedButton.styleFrom(
+                                                primary:
+                                                    const Color(0xFFEC407A),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(24),
+                                                ),
                                               ),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'BUAT JANJI ULANG',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  'BUAT JANJI ULANG',
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              final String phoneNumber =
-                                                  companion.no_telp ?? '';
-                                              if (phoneNumber.isNotEmpty) {
-                                                launch('tel:$phoneNumber');
-                                              }
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              primary: const Color(0xFF4CAF50),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
+                                        if (!isExpired) SizedBox(width: 8),
+                                        if (!isExpired)
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                final String phoneNumber =
+                                                    companion.no_telp ?? '';
+                                                if (phoneNumber.isNotEmpty) {
+                                                  launch('tel:$phoneNumber');
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                primary:
+                                                    const Color(0xFF4CAF50),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(24),
+                                                ),
                                               ),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'TELEPON',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  'TELEPON',
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
                                       ],
                                     ),
                                   ],
