@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
+import 'package:safe_report/screens/pelaporan_admin.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   @override
@@ -265,30 +266,41 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ],
                           ),
                           // Pelaporan
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/pelaporan_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PelaporanAdmin()),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Color(0xFFF4E8EA),
+                                      child: Image.asset(
+                                          "assets/images/pelaporan_logo.png"),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Pelaporan",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF9D9D9D),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Pelaporan",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF9D9D9D),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],

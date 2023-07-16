@@ -8,6 +8,8 @@ import 'dart:io';
 import 'package:safe_report/screens/report_success.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class PelaporanForm extends StatefulWidget {
   @override
@@ -109,7 +111,11 @@ class _PelaporanFormState extends State<PelaporanForm> {
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
   Future<void> _submitForm() async {
-   if (_formKey.currentState!.validate()) {
+  if (_formKey.currentState!.validate()) {
+    // Get the current user's UID
+    final User? user = FirebaseAuth.instance.currentUser;
+    final uid = user?.uid;
+
     String? fileUrl;
     if (_pickedFile != null) {
       final firebase_storage.Reference storageRef =
@@ -121,79 +127,82 @@ class _PelaporanFormState extends State<PelaporanForm> {
       fileUrl = await snapshot.ref.getDownloadURL();
     }
 
-      if (_formKey.currentState!.validate()) {
-        try {
-          final formData = {
-            'nama': _namaController.text,
-            'nim': _nimController.text,
-            'noTelp': _noTelpController.text,
-            'namaPelaku': _namaPelakuController.text,
-            'noTelpPelaku': _noTelpPelakuController.text,
-            'deskripsiPelaku': _deskripsiPelakuController.text,
-            'tanggalKejadian': _tanggalKejadianController.text,
-            'tempatKejadian': _tempatKejadianController.text,
-            'kronologiKejadian': _kronologiKejadianController.text,
-            'namaSaksi': _namaSaksiController.text,
-            'noTelpSaksi': _noTelpSaksiController.text,
-            'keteranganSaksi': _keteranganSaksiController.text,
-            'gender': gender,
-            'jurusan': jurusan,
-            'prodi': prodi,
-            'kelas': kelas,
-            'jenisKasus': jenisKasus,
-            'bentukKasus': bentukKasus,
-            'genderPelaku': genderPelaku,
-            'jurusanPelaku': jurusanPelaku,
-            'prodiPelaku': prodiPelaku,
-            'kelasPelaku': kelasPelaku,
-            'bukti_pendukung': fileUrl
-          };
+    if (_formKey.currentState!.validate()) {
+      try {
+        final formData = {
+          'uid': uid, // Add the UID to the form data
+          'nama': _namaController.text,
+          'nim': _nimController.text,
+          'noTelp': _noTelpController.text,
+          'namaPelaku': _namaPelakuController.text,
+          'noTelpPelaku': _noTelpPelakuController.text,
+          'deskripsiPelaku': _deskripsiPelakuController.text,
+          'tanggalKejadian': _tanggalKejadianController.text,
+          'tempatKejadian': _tempatKejadianController.text,
+          'kronologiKejadian': _kronologiKejadianController.text,
+          'namaSaksi': _namaSaksiController.text,
+          'noTelpSaksi': _noTelpSaksiController.text,
+          'keteranganSaksi': _keteranganSaksiController.text,
+          'gender': gender,
+          'jurusan': jurusan,
+          'prodi': prodi,
+          'kelas': kelas,
+          'jenisKasus': jenisKasus,
+          'bentukKasus': bentukKasus,
+          'genderPelaku': genderPelaku,
+          'jurusanPelaku': jurusanPelaku,
+          'prodiPelaku': prodiPelaku,
+          'kelasPelaku': kelasPelaku,
+          'bukti_pendukung': fileUrl,
+        };
 
-          final firestore = FirebaseFirestore.instance;
-          await firestore.collection('report').add(formData);
+        final firestore = FirebaseFirestore.instance;
+        await firestore.collection('report').add(formData);
 
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ReportSuccess()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ReportSuccess()));
 
-          _namaController.clear();
-          _nimController.clear();
-          _noTelpController.clear();
-          _namaPelakuController.clear();
-          _noTelpPelakuController.clear();
-          _deskripsiPelakuController.clear();
-          _tanggalKejadianController.clear();
-          _tempatKejadianController.clear();
-          _kronologiKejadianController.clear();
-          _namaSaksiController.clear();
-          _noTelpSaksiController.clear();
-          _keteranganSaksiController.clear();
-          setState(() {
-            gender = 'Perempuan';
-            jurusan = null;
-            prodi = null;
-            kelas = null;
-            jenisKasus = null;
-            bentukKasus = null;
-            genderPelaku = 'Laki-laki';
-            jurusanPelaku = null;
-            prodiPelaku = null;
-            kelasPelaku = null;
-          });
-        } catch (error) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Error'),
-                content: Text(
-                    'An error occurred while submitting the form. Please try again.'),
-              );
-            },
-          );
-        }
+        // Clear the form fields and reset the state
+        _namaController.clear();
+        _nimController.clear();
+        _noTelpController.clear();
+        _namaPelakuController.clear();
+        _noTelpPelakuController.clear();
+        _deskripsiPelakuController.clear();
+        _tanggalKejadianController.clear();
+        _tempatKejadianController.clear();
+        _kronologiKejadianController.clear();
+        _namaSaksiController.clear();
+        _noTelpSaksiController.clear();
+        _keteranganSaksiController.clear();
+        setState(() {
+          gender = 'Perempuan';
+          jurusan = null;
+          prodi = null;
+          kelas = null;
+          jenisKasus = null;
+          bentukKasus = null;
+          genderPelaku = 'Laki-laki';
+          jurusanPelaku = null;
+          prodiPelaku = null;
+          kelasPelaku = null;
+        });
+      } catch (error) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text(
+                  'An error occurred while submitting the form. Please try again.'),
+            );
+          },
+        );
       }
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
