@@ -62,35 +62,130 @@ class PendampinganNotif extends StatelessWidget {
   }
 
   Future<void> reschedule(
-      BuildContext context, AppointmentModel appointment) async {
-    final DateTime? pickedDate = await showDatePicker(
+    BuildContext context,
+    AppointmentModel appointment,
+  ) async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 30,
+                  child: Icon(
+                    Icons.calendar_month,
+                    color: Colors.black,
+                    size: 30,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Anda yakin ingin menjadwalkan\nulang janji temu?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 30.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: 100,
+                        height: 45,
+                        child: ElevatedButton(
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Color(0xFFF1F1F1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16.0),
+                    Expanded(
+                      child: SizedBox(
+                        width: 100,
+                        height: 45,
+                        child: ElevatedButton(
+                          child: Text(
+                            'Yakin',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Color(0xFFEC407A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.0),
+              ],
+            ),
+          ),
+        );
+      },
     );
 
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
+    if (confirmed == true) {
+      final DateTime? pickedDate = await showDatePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialDate: appointment.date.isBefore(DateTime.now())
+            ? DateTime.now()
+            : appointment.date,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(Duration(days: 365)),
       );
 
-      if (pickedTime != null) {
-        final DateTime newDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
+      if (pickedDate != null) {
+        final TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(appointment.date),
         );
 
-        await FirebaseFirestore.instance
-            .collection('appointments')
-            .doc(appointment.id)
-            .update({
-          'date': newDateTime,
-        });
+        if (pickedTime != null) {
+          final DateTime newDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+
+          await FirebaseFirestore.instance
+              .collection('appointments')
+              .doc(appointment.id)
+              .update({
+            'date': newDateTime,
+          });
+        }
       }
     }
   }
@@ -143,12 +238,42 @@ class PendampinganNotif extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16.0),
-                                child: Text(
-                                  'JANJI TEMU PENDAMPINGAN',
-                                  style: GoogleFonts.inter(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFEC407A)),
+                                child: Stack(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'JANJI TEMU PENDAMPINGAN',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFFEC407A),
+                                            ),
+                                          ),
+                                        ),
+                                        if (isExpired)
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(8),
+                                                bottomLeft: Radius.circular(8),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'Selesai',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                               SizedBox(height: 5),
