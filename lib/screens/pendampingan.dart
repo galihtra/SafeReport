@@ -6,6 +6,7 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:safe_report/model/Appointment.dart';
 import 'package:safe_report/model/user_model.dart';
+import 'pendampingan_notif.dart';
 
 class Pendampingan extends StatefulWidget {
   const Pendampingan({Key? key}) : super(key: key);
@@ -45,8 +46,7 @@ class _PendampinganState extends State<Pendampingan> {
             padding: const EdgeInsets.all(10.0),
             child: ListView(
               children: snapshot.data!.docs.map((doc) {
-                Map<String, dynamic> data =
-                    doc.data() as Map<String, dynamic>;
+                Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                 UserModel user = UserModel.fromMap(data);
                 return InkWell(
                   onTap: () {
@@ -164,6 +164,73 @@ class _DetailPendampingState extends State<DetailPendamping> {
       await FirebaseFirestore.instance
           .collection('appointments')
           .add(appointment.toMap());
+
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: 8.0),
+                      Text(
+                        'Berhasil Membuat Janji Temu',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Janji temu anda telah diatur',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  SizedBox(height: 30.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PendampinganNotif(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
     } else {
       throw Exception('No user found');
     }

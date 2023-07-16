@@ -313,12 +313,12 @@ class _PendampinganNotifState extends State<PendampinganNotif> {
                                 ),
                               ),
                               SizedBox(height: 5),
-                              if (companion.image_url != null)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 16.0),
-                                  child: Row(
-                                    children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16.0),
+                                child: Row(
+                                  children: [
+                                    if (companion.image_url != null)
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
                                         child: Image.network(
@@ -326,70 +326,89 @@ class _PendampinganNotifState extends State<PendampinganNotif> {
                                           fit: BoxFit.cover,
                                           height: 65.0,
                                           width: 70.0,
+                                          errorBuilder: (BuildContext context,
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                            return Image.asset(
+                                              'assets/images/default_avatar.png',
+                                              fit: BoxFit.cover,
+                                              height: 65.0,
+                                              width: 70.0,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    else
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.asset(
+                                          'assets/images/default_avatar.png',
+                                          height: 65.0,
+                                          width: 70.0,
                                         ),
                                       ),
-                                      SizedBox(width: 15),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              companion.name,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            Text(
-                                              companion.gender,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            Text(
-                                              '(${companion.prodi ?? ''})',
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                color: Color(0xFF98A2B3),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Column(
+                                    SizedBox(width: 15),
+                                    Expanded(
+                                      child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            DateFormat('HH:mm')
-                                                .format(appointment.date),
-                                            style: TextStyle(
+                                            companion.name,
+                                            style: GoogleFonts.poppins(
                                               fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: isExpired
-                                                  ? Colors.grey
-                                                  : Colors.red,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                           Text(
-                                            DateFormat('dd MMMM yyyy')
-                                                .format(appointment.date),
-                                            style: TextStyle(
+                                            companion.gender,
+                                            style: GoogleFonts.poppins(
                                               fontSize: 14,
-                                              color: isExpired
-                                                  ? Colors.grey
-                                                  : Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            '(${companion.prodi ?? ''})',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              color: Color(0xFF98A2B3),
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          DateFormat('HH:mm')
+                                              .format(appointment.date),
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: isExpired
+                                                ? Colors.grey
+                                                : Colors.red,
+                                          ),
+                                        ),
+                                        Text(
+                                          DateFormat('dd MMMM yyyy')
+                                              .format(appointment.date),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isExpired
+                                                ? Colors.grey
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 16.0, right: 16.0),
