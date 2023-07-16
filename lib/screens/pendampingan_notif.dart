@@ -25,6 +25,25 @@ class PendampinganNotif extends StatelessWidget {
       return AppointmentModel.fromFirestore(doc);
     }).toList();
 
+    // Sorting appointments based on date and time, with expired ones at the bottom and upcoming ones at the top
+    appointments.sort((a, b) {
+      final now = DateTime.now();
+      final isExpiredA = now.isAfter(a.date);
+      final isExpiredB = now.isAfter(b.date);
+
+      if (isExpiredA && isExpiredB) {
+        return a.date
+            .compareTo(b.date); // Sort by date for expired appointments
+      } else if (isExpiredA) {
+        return 1; // Push expired appointments to the bottom
+      } else if (isExpiredB) {
+        return -1; // Push upcoming appointments to the top
+      } else {
+        return a.date
+            .compareTo(b.date); // Sort by date for upcoming appointments
+      }
+    });
+
     return appointments;
   }
 
@@ -76,6 +95,11 @@ class PendampinganNotif extends StatelessWidget {
     }
   }
 
+  bool isAppointmentExpired(DateTime date) {
+    final now = DateTime.now();
+    return now.isAfter(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     print('User ID: $userId'); // Debug User ID
@@ -102,6 +126,8 @@ class PendampinganNotif extends StatelessWidget {
               itemCount: appointments.length,
               itemBuilder: (context, index) {
                 final appointment = appointments[index];
+                final bool isExpired = isAppointmentExpired(appointment.date);
+
                 return FutureBuilder<UserModel>(
                   future: getCompanion(appointment.companionId),
                   builder: (context, snapshot) {
@@ -135,10 +161,11 @@ class PendampinganNotif extends StatelessWidget {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(10),
                                         child: Image.network(
-                                            companion.image_url!,
-                                            fit: BoxFit.cover,
-                                            height: 65.0,
-                                            width: 70.0),
+                                          companion.image_url!,
+                                          fit: BoxFit.cover,
+                                          height: 65.0,
+                                          width: 70.0,
+                                        ),
                                       ),
                                       SizedBox(width: 15),
                                       Expanded(
@@ -146,22 +173,29 @@ class PendampinganNotif extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(companion.name,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                        FontWeight.w500)),
-                                            Text(companion.gender,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.grey)),
-                                            Text('(${companion.prodi ?? ''})',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: Color(0xFF98A2B3),
-                                                )),
+                                            Text(
+                                              companion.name,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Text(
+                                              companion.gender,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            Text(
+                                              '(${companion.prodi ?? ''})',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                                color: Color(0xFF98A2B3),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -175,12 +209,18 @@ class PendampinganNotif extends StatelessWidget {
                                             style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.red),
+                                                color: isExpired
+                                                    ? Colors.grey
+                                                    : Colors.red),
                                           ),
                                           Text(
                                             DateFormat('dd MMMM yyyy')
                                                 .format(appointment.date),
-                                            style: TextStyle(fontSize: 14),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: isExpired
+                                                    ? Colors.grey
+                                                    : Colors.black),
                                           ),
                                         ],
                                       ),
@@ -196,8 +236,9 @@ class PendampinganNotif extends StatelessWidget {
                                     Text(
                                       'Detail Tempat:',
                                       style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                     SizedBox(height: 4),
                                     Text(
