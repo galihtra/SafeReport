@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safe_report/screens/admin_home_screen.dart';
 import 'package:safe_report/screens/status_screen.dart';
-import 'package:safe_report/screens/notifications_screen.dart';
+import 'package:safe_report/screens/admin_notifications_screen.dart';
 import 'package:safe_report/screens/profile_screen.dart';
 import 'package:safe_report/screens/add_article.dart';
 
