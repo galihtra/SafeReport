@@ -7,6 +7,7 @@ class Campaign {
   String description;
   String adminId;
   List<UserModel> participants;
+  String imageUrl;
 
   Campaign({
     required this.id,
@@ -14,6 +15,7 @@ class Campaign {
     required this.description,
     required this.adminId,
     required this.participants,
+    required this.imageUrl,
   });
 
   Campaign.fromSnapshot(DocumentSnapshot snapshot)
@@ -25,12 +27,14 @@ class Campaign {
           (snapshot['participants'] ?? []).map(
             (participant) => UserModel.fromMap(participant),
           ),
-        );
+        ),
+        imageUrl = snapshot['imageUrl'];
 
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,
         'adminId': adminId,
         'participants': participants.map((user) => user.toMap()).toList(),
+        'imageUrl': imageUrl,
       };
 }

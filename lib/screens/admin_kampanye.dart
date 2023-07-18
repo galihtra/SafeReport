@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safe_report/model/campaign_model.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class AdminKampanye extends StatefulWidget {
   const AdminKampanye({Key? key});
@@ -14,35 +18,59 @@ class AdminKampanye extends StatefulWidget {
 class _AdminKampanyeState extends State<AdminKampanye> {
   final TextEditingController _judulController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
+  File? _selectedImage;
 
   void _buatKampanye() async {
     final String judul = _judulController.text;
     final String deskripsi = _deskripsiController.text;
 
     final User? user = FirebaseAuth.instance.currentUser;
-    final String adminId =
-        user?.uid ?? ''; // Mengambil adminId dari pengguna yang sedang masuk
+    final String adminId = user?.uid ?? '';
 
-    final Campaign newCampaign = Campaign(
-      id: '', // ID kampanye akan diisi oleh Firestore
-      title: judul,
-      description: deskripsi,
-      adminId: adminId,
-      participants: [], // Kampanye baru belum memiliki partisipan
-    );
+    if (_selectedImage != null) {
+      final String imageName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('campaign_images')
+          .child(imageName);
 
-    final CollectionReference campaignsRef =
-        FirebaseFirestore.instance.collection('campaigns');
+      final TaskSnapshot taskSnapshot =
+          await storageReference.putFile(_selectedImage!);
+      final imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-    final DocumentReference docRef =
-        await campaignsRef.add(newCampaign.toJson());
-    final String campaignId = docRef.id;
+      final Campaign newCampaign = Campaign(
+        id: '',
+        title: judul,
+        description: deskripsi,
+        adminId: adminId,
+        participants: [],
+        imageUrl: imageUrl,
+      );
 
-    newCampaign.id = campaignId;
-    await docRef.update({'id': campaignId});
+      final CollectionReference campaignsRef =
+          FirebaseFirestore.instance.collection('campaigns');
 
-    Navigator.pop(
-        context); // Kembali ke halaman sebelumnya setelah kampanye dibuat
+      final DocumentReference docRef =
+          await campaignsRef.add(newCampaign.toJson());
+      final String campaignId = docRef.id;
+
+      newCampaign.id = campaignId;
+      await docRef.update({'id': campaignId});
+
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> _ambilGambar() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
   }
 
   @override
@@ -93,6 +121,33 @@ class _AdminKampanyeState extends State<AdminKampanye> {
                 hintText: 'Masukkan deskripsi kampanye',
               ),
               maxLines: 4,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Pilih Gambar',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            InkWell(
+              onTap: _ambilGambar,
+              child: _selectedImage != null
+                  ? Image.file(
+                      _selectedImage!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey,
+                      child: Icon(
+                        Icons.image,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
             SizedBox(height: 16),
             ElevatedButton(
