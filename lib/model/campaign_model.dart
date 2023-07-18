@@ -1,65 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:safe_report/model/user_model.dart';
 
-enum CampaignType { luring, online }
+class Campaign {
+  String id;
+  String title;
+  String description;
+  String adminId;
+  List<UserModel> participants;
 
-class CampaignModel {
-  final String id;
-  final String title;
-  final String time; // Ubah tipe data TimeOfDay menjadi String
-  final DateTime schedule;
-  final String description;
-  final String speakerName;
-  final String location;
-  final String zoomLink;
-  final bool hasCertificate;
-  final CampaignType type;
-  final String imagePath;
-
-  CampaignModel({
+  Campaign({
     required this.id,
     required this.title,
-    required this.time,
-    required this.schedule,
     required this.description,
-    required this.speakerName,
-    required this.location,
-    required this.zoomLink,
-    required this.hasCertificate,
-    required this.type,
-    required this.imagePath,
+    required this.adminId,
+    required this.participants,
   });
 
-  factory CampaignModel.fromSnapshot(DocumentSnapshot snapshot) {
-    final data = snapshot.data() as Map<String, dynamic>;
-    return CampaignModel(
-      id: snapshot.id,
-      title: data['title'],
-      time: data['time'], // Ubah pengambilan data 'time'
-      schedule: data['schedule'].toDate(),
-      imagePath: data['imagePath'],
-      description: data['description'],
-      speakerName: data['speakerName'],
-      location: data['location'],
-      zoomLink: data['zoomLink'],
-      hasCertificate: data['hasCertificate'],
-      type: CampaignType.values.firstWhere(
-        (type) => type.toString() == 'CampaignType.${data['type']}',
-      ),
-    );
-  }
+  Campaign.fromSnapshot(DocumentSnapshot snapshot)
+      : id = snapshot.id,
+        title = snapshot['title'],
+        description = snapshot['description'],
+        adminId = snapshot['adminId'],
+        participants = List<UserModel>.from(
+          (snapshot['participants'] ?? []).map(
+            (participant) => UserModel.fromMap(participant),
+          ),
+        );
 
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'time': time, // Ubah penyimpanan data 'time'
-      'schedule': Timestamp.fromDate(schedule),
-      'description': description,
-      'speakerName': speakerName,
-      'location': location,
-      'zoomLink': zoomLink,
-      'hasCertificate': hasCertificate,
-      'type': type.toString().split('.').last,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'description': description,
+        'adminId': adminId,
+        'participants': participants.map((user) => user.toMap()).toList(),
+      };
 }

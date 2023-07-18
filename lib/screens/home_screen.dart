@@ -271,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      Kampanye(), // Ganti dengan halaman kampanye yang sesuai
+                                      ListKampanye(), // Ganti dengan halaman kampanye yang sesuai
                                 ),
                               );
                             },
