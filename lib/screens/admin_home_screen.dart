@@ -279,7 +279,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AdminKampanye(), // Ganti dengan halaman kampanye yang sesuai
+                                      KampanyeScreen(), // Ganti dengan halaman kampanye yang sesuai
                                 ),
                               );
                             },

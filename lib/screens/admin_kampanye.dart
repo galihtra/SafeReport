@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,14 +7,92 @@ import 'package:safe_report/model/campaign_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class AdminKampanye extends StatefulWidget {
-  const AdminKampanye({Key? key});
+class KampanyeScreen extends StatefulWidget {
+  const KampanyeScreen({Key? key}) : super(key: key);
 
   @override
-  _AdminKampanyeState createState() => _AdminKampanyeState();
+  _KampanyeScreenState createState() => _KampanyeScreenState();
 }
 
-class _AdminKampanyeState extends State<AdminKampanye> {
+class _KampanyeScreenState extends State<KampanyeScreen> {
+  final CollectionReference campaignsRef =
+      FirebaseFirestore.instance.collection('campaigns');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Daftar Kampanye'),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: campaignsRef.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+
+          return ListView(
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              Campaign campaign = Campaign.fromSnapshot(document);
+              return Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ListTile(
+                  title: Text(campaign.title),
+                  subtitle: Text(campaign.description),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      campaign.imageUrl,
+                      fit: BoxFit.cover,
+                      width: 60,
+                      height: 60,
+                    ),
+                  ),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetailKampanye(campaign: campaign),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }).toList(),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BuatKampanye()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+}
+
+class BuatKampanye extends StatefulWidget {
+  const BuatKampanye({Key? key}) : super(key: key);
+
+  @override
+  _BuatKampanyeState createState() => _BuatKampanyeState();
+}
+
+class _BuatKampanyeState extends State<BuatKampanye> {
   final TextEditingController _judulController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
   File? _selectedImage;
@@ -153,6 +230,65 @@ class _AdminKampanyeState extends State<AdminKampanye> {
             ElevatedButton(
               onPressed: _buatKampanye,
               child: Text('Buat Kampanye'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DetailKampanye extends StatefulWidget {
+  final Campaign campaign;
+  const DetailKampanye({Key? key, required this.campaign}) : super(key: key);
+
+  @override
+  _DetailKampanyeState createState() => _DetailKampanyeState();
+}
+
+class _DetailKampanyeState extends State<DetailKampanye> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detail Kampanye'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.campaign.title,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16),
+            Image.network(widget.campaign.imageUrl),
+            SizedBox(height: 16),
+            Text(
+              'Deskripsi',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(widget.campaign.description),
+            SizedBox(height: 16),
+            Text(
+              'Partisipan',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ...widget.campaign.participants.map(
+              (participant) => ListTile(
+                leading: Icon(Icons.person),
+                title: Text(participant.name),
+              ),
             ),
           ],
         ),
