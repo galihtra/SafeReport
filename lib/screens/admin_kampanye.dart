@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:safe_report/model/certificate_model.dart';
 import 'package:safe_report/model/user_model.dart';
+import 'package:date_picker_timeline/date_picker_timeline.dart';
+import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 
 class KampanyeScreen extends StatefulWidget {
   const KampanyeScreen({Key? key}) : super(key: key);
@@ -87,9 +89,8 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
   }
 }
 
+// Halaman Buat Kampanye
 class BuatKampanye extends StatefulWidget {
-  const BuatKampanye({Key? key}) : super(key: key);
-
   @override
   _BuatKampanyeState createState() => _BuatKampanyeState();
 }
@@ -97,16 +98,29 @@ class BuatKampanye extends StatefulWidget {
 class _BuatKampanyeState extends State<BuatKampanye> {
   final TextEditingController _judulController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
+  final TextEditingController _linkZoomController = TextEditingController();
+  final TextEditingController _nameSpeakerController = TextEditingController();
+  final TextEditingController _placeController = TextEditingController();
+
+  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedTime = DateTime.now();
+
+  String? _selectedMeet;
+
+  final List<String> _meetOptions = ['luring', 'daring'];
+
   File? _selectedImage;
 
   void _buatKampanye() async {
     final String judul = _judulController.text;
     final String deskripsi = _deskripsiController.text;
-
+    final String zoomLink = _linkZoomController.text;
+    final String nameSpeaker = _nameSpeakerController.text;
+    final String place = _placeController.text;
     final User? user = FirebaseAuth.instance.currentUser;
     final String adminId = user?.uid ?? '';
 
-    if (_selectedImage != null) {
+    if (_selectedImage != null && _selectedMeet != null) {
       final String imageName =
           DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
       final Reference storageReference = FirebaseStorage.instance
@@ -118,6 +132,14 @@ class _BuatKampanyeState extends State<BuatKampanye> {
           await storageReference.putFile(_selectedImage!);
       final imageUrl = await taskSnapshot.ref.getDownloadURL();
 
+      final Timestamp dateTime = Timestamp.fromDate(DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        _selectedTime.hour,
+        _selectedTime.minute,
+      ));
+
       final Campaign newCampaign = Campaign(
         id: '',
         title: judul,
@@ -125,19 +147,28 @@ class _BuatKampanyeState extends State<BuatKampanye> {
         adminId: adminId,
         participants: [],
         imageUrl: imageUrl,
+        dateTime: dateTime,
+        zoomLink: zoomLink.isNotEmpty ? zoomLink : null, // zoomLink boleh null
+        nameSpeaker: nameSpeaker,
+        place: place,
+        meet: _selectedMeet!,
       );
 
-      final CollectionReference campaignsRef =
-          FirebaseFirestore.instance.collection('campaigns');
+      try {
+        final CollectionReference campaignsRef =
+            FirebaseFirestore.instance.collection('campaigns');
 
-      final DocumentReference docRef =
-          await campaignsRef.add(newCampaign.toJson());
-      final String campaignId = docRef.id;
+        final DocumentReference docRef =
+            await campaignsRef.add(newCampaign.toJson());
+        final String campaignId = docRef.id;
 
-      newCampaign.id = campaignId;
-      await docRef.update({'id': campaignId});
+        newCampaign.id = campaignId;
+        await docRef.update({'id': campaignId});
 
-      Navigator.pop(context);
+        Navigator.pop(context);
+      } catch (error) {
+        print('Error when creating campaign: $error');
+      }
     }
   }
 
@@ -156,59 +187,25 @@ class _BuatKampanyeState extends State<BuatKampanye> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          "Buat Kampanye",
-          style: GoogleFonts.inter(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
+        title: Text('Buat Kampanye Baru'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
-            Text(
-              'Judul',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextFormField(
+            TextField(
               controller: _judulController,
               decoration: InputDecoration(
-                hintText: 'Masukkan judul kampanye',
+                hintText: 'Masukkan judul',
               ),
             ),
-            SizedBox(height: 16),
-            Text(
-              'Deskripsi',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextFormField(
+            TextField(
               controller: _deskripsiController,
               decoration: InputDecoration(
-                hintText: 'Masukkan deskripsi kampanye',
+                hintText: 'Masukkan deskripsi',
               ),
-              maxLines: 4,
             ),
             SizedBox(height: 16),
-            Text(
-              'Pilih Gambar',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             InkWell(
               onTap: _ambilGambar,
               child: _selectedImage != null
@@ -229,6 +226,65 @@ class _BuatKampanyeState extends State<BuatKampanye> {
                     ),
             ),
             SizedBox(height: 16),
+            DatePicker(
+              DateTime.now(),
+              initialSelectedDate: DateTime.now(),
+              selectionColor: Colors.black,
+              selectedTextColor: Colors.white,
+              onDateChange: (date) {
+                setState(() {
+                  _selectedDate = date;
+                });
+              },
+            ),
+            TimePickerSpinner(
+              is24HourMode: true,
+              normalTextStyle:
+                  TextStyle(fontSize: 24, color: Colors.deepOrange),
+              highlightedTextStyle:
+                  TextStyle(fontSize: 24, color: Colors.yellow),
+              spacing: 50,
+              itemHeight: 80,
+              isForce2Digits: true,
+              onTimeChange: (time) {
+                setState(() {
+                  _selectedTime = time;
+                });
+              },
+            ),
+            TextField(
+              controller: _linkZoomController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan link Zoom',
+              ),
+            ),
+            TextField(
+              controller: _nameSpeakerController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan nama pembicara',
+              ),
+            ),
+            TextField(
+              controller: _placeController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan lokasi pertemuan',
+              ),
+            ),
+            DropdownButtonFormField(
+              hint: Text('Pilih metode pertemuan'),
+              value: _selectedMeet,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedMeet = newValue;
+                });
+              },
+              items: _meetOptions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
             ElevatedButton(
               onPressed: _buatKampanye,
               child: Text('Buat Kampanye'),
