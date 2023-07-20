@@ -70,7 +70,7 @@ class ListKampanye extends StatelessWidget {
   }
 }
 
-// Halaman Detail
+// Halaman Detail User
 class DetailKampanye extends StatefulWidget {
   final Campaign campaign;
 
@@ -127,17 +127,17 @@ class _DetailKampanyeState extends State<DetailKampanye> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.grey,
+                  backgroundColor: Color.fromARGB(255, 238, 236, 236),
                   radius: 30,
                   child: Icon(
-                    Icons.calendar_month,
-                    color: Colors.black,
+                    Icons.campaign,
+                    color: Color(0xFFEC407A),
                     size: 30,
                   ),
                 ),
                 SizedBox(height: 16.0),
                 Text(
-                  'Anda yakin ingin bergabung dengan kampanye ini?',
+                  'Anda yakin ingin \nbergabung kampanye ini?',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(
                     fontSize: 16.0,

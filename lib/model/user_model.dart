@@ -1,3 +1,5 @@
+import 'package:safe_report/model/certificate_model.dart';
+
 class UserModel {
   String uid;
   String name;
@@ -8,7 +10,7 @@ class UserModel {
   String? image_url;
   String? prodi;
   String? no_telp;
-  String? certificateUrl;
+  List<Certificate>? certificates; // made this optional
 
   UserModel({
     required this.uid,
@@ -20,7 +22,7 @@ class UserModel {
     this.bio,
     this.prodi,
     this.no_telp,
-    this.certificateUrl,
+    this.certificates, // and removed the required keyword here
   });
 
   factory UserModel.fromMap(Map<String, dynamic>? map) {
@@ -37,7 +39,11 @@ class UserModel {
       bio: map['bio'],
       prodi: map['prodi'],
       no_telp: map['no_telp'],
-      certificateUrl: map['certificateUrl'],
+      certificates: (map['certificates'] != null)
+          ? List<Certificate>.from(
+              map['certificates'].map((certificate) => Certificate.fromMap(certificate))
+            )
+          : null,
     );
   }
 
@@ -52,7 +58,7 @@ class UserModel {
       'bio': bio,
       'prodi': prodi,
       'no_telp': no_telp,
-      'certificateUrl': certificateUrl,
+      'certificates': certificates?.map((certificate) => certificate.toMap()).toList(),
     };
   }
 }

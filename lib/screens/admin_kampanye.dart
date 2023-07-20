@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safe_report/model/campaign_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:safe_report/model/certificate_model.dart';
 import 'package:safe_report/model/user_model.dart';
 
 class KampanyeScreen extends StatefulWidget {
@@ -239,8 +240,10 @@ class _BuatKampanyeState extends State<BuatKampanye> {
   }
 }
 
+// Halaman Detail
 class DetailKampanye extends StatefulWidget {
   final Campaign campaign;
+
   const DetailKampanye({Key? key, required this.campaign}) : super(key: key);
 
   @override
@@ -261,8 +264,10 @@ class _DetailKampanyeState extends State<DetailKampanye> {
       var docRef =
           FirebaseFirestore.instance.collection('users').doc(participant.uid);
       var doc = await docRef.get();
-      var certificateUrl = doc.data()?['certificateUrl'];
-      _certificateStatus[participant.uid] = certificateUrl != null;
+      var user = UserModel.fromMap(doc.data());
+      _certificateStatus[participant.uid] = user.certificates
+              ?.any((cert) => cert.campaignId == widget.campaign.id) ??
+          false;
     }
     setState(() {}); // Rebuild UI with new _certificateStatus
   }
@@ -286,9 +291,18 @@ class _DetailKampanyeState extends State<DetailKampanye> {
           await storageReference.putFile(selectedCertificate);
       final certificateUrl = await taskSnapshot.ref.getDownloadURL();
 
+      final Certificate newCertificate = Certificate(
+        id: '', // An empty string as placeholder
+        campaignId: widget.campaign.id,
+        certificateUrl: certificateUrl,
+      );
+
+      participant.certificates = participant.certificates ?? [];
+      participant.certificates!.add(newCertificate);
+
       final docRef =
           FirebaseFirestore.instance.collection('users').doc(participant.uid);
-      await docRef.update({'certificateUrl': certificateUrl});
+      await docRef.update(participant.toMap());
 
       setState(() {
         _certificateStatus[participant.uid] = true;
