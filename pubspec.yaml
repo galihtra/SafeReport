@@ -53,6 +53,7 @@ dependencies:
   file_picker: ^5.3.1
   intl: ^0.17.0
   cached_network_image: ^3.1.0
+  collection: ^1.15.0
 
 
 dev_dependencies:
