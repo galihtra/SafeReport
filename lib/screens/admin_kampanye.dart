@@ -260,14 +260,19 @@ class _DetailKampanyeState extends State<DetailKampanye> {
   }
 
   Future<void> _checkCertificateStatus() async {
-    for (var participant in widget.campaign.participants) {
-      var docRef =
-          FirebaseFirestore.instance.collection('users').doc(participant.uid);
-      var doc = await docRef.get();
-      var user = UserModel.fromMap(doc.data());
-      _certificateStatus[participant.uid] = user.certificates
-              ?.any((cert) => cert.campaignId == widget.campaign.id) ??
-          false;
+    try {
+      for (var participant in widget.campaign.participants) {
+        var docRef =
+            FirebaseFirestore.instance.collection('users').doc(participant.uid);
+        var doc = await docRef.get();
+        var user = UserModel.fromMap(doc.data());
+        _certificateStatus[participant.uid] = user.certificates
+                ?.any((cert) => cert.campaignId == widget.campaign.id) ??
+            false;
+      }
+    } catch (e) {
+      print("Error: $e");
+      // handle error properly, i.e show error message to user
     }
     setState(() {}); // Rebuild UI with new _certificateStatus
   }
@@ -297,12 +302,21 @@ class _DetailKampanyeState extends State<DetailKampanye> {
         certificateUrl: certificateUrl,
       );
 
+      final CollectionReference certificatesCollection =
+          FirebaseFirestore.instance.collection('certificates');
+      final docRef = await certificatesCollection.add(newCertificate.toMap());
+
+      newCertificate.id =
+          docRef.id; // Update the certificate id with the generated id
+
       participant.certificates = participant.certificates ?? [];
       participant.certificates!.add(newCertificate);
 
-      final docRef =
+      final userDocRef =
           FirebaseFirestore.instance.collection('users').doc(participant.uid);
-      await docRef.update(participant.toMap());
+      await userDocRef.update({
+        'certificates': FieldValue.arrayUnion([newCertificate.toMap()]),
+      });
 
       setState(() {
         _certificateStatus[participant.uid] = true;
@@ -312,7 +326,8 @@ class _DetailKampanyeState extends State<DetailKampanye> {
 
   @override
   Widget build(BuildContext context) {
-    widget.campaign.participants.sort((a, b) {
+    final participants = [...widget.campaign.participants]; // make a copy
+    participants.sort((a, b) {
       if ((_certificateStatus[a.uid] ?? false) &&
           !(_certificateStatus[b.uid] ?? false)) {
         return 1;
@@ -359,7 +374,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            ...widget.campaign.participants.map(
+            ...participants.map(
               (participant) => ListTile(
                 leading: Icon(Icons.person),
                 title: Text(participant.name),

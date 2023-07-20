@@ -9,17 +9,15 @@ class Certificate {
     required this.certificateUrl,
   });
 
-  factory Certificate.fromMap(Map<String, dynamic>? map) {
-    if (map == null) {
-      throw Exception('Invalid certificate data');
-    }
+  factory Certificate.fromMap(Map<String, dynamic> map) {
     return Certificate(
-      id: map['id'] ?? '',
-      campaignId: map['campaignId'] ?? '',
-      certificateUrl: map['certificateUrl'] ?? '',
+      id: map['id'],
+      campaignId: map['campaignId'],
+      certificateUrl: map['certificateUrl'],
     );
   }
 
+  // Add this method
   Map<String, dynamic> toMap() {
     return {
       'id': id,
