@@ -8,6 +8,7 @@ class UserModel {
   String? image_url;
   String? prodi;
   String? no_telp;
+  String? certificateUrl;
 
   UserModel({
     required this.uid,
@@ -19,6 +20,7 @@ class UserModel {
     this.bio,
     this.prodi,
     this.no_telp,
+    this.certificateUrl,
   });
 
   factory UserModel.fromMap(Map<String, dynamic>? map) {
@@ -35,6 +37,7 @@ class UserModel {
       bio: map['bio'],
       prodi: map['prodi'],
       no_telp: map['no_telp'],
+      certificateUrl: map['certificateUrl'],
     );
   }
 
@@ -49,6 +52,7 @@ class UserModel {
       'bio': bio,
       'prodi': prodi,
       'no_telp': no_telp,
+      'certificateUrl': certificateUrl,
     };
   }
 }

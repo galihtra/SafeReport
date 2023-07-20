@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safe_report/model/campaign_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:safe_report/model/user_model.dart';
 
 class KampanyeScreen extends StatefulWidget {
   const KampanyeScreen({Key? key}) : super(key: key);
@@ -247,8 +248,68 @@ class DetailKampanye extends StatefulWidget {
 }
 
 class _DetailKampanyeState extends State<DetailKampanye> {
+  Map<String, bool> _certificateStatus = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _checkCertificateStatus();
+  }
+
+  Future<void> _checkCertificateStatus() async {
+    for (var participant in widget.campaign.participants) {
+      var docRef =
+          FirebaseFirestore.instance.collection('users').doc(participant.uid);
+      var doc = await docRef.get();
+      var certificateUrl = doc.data()?['certificateUrl'];
+      _certificateStatus[participant.uid] = certificateUrl != null;
+    }
+    setState(() {}); // Rebuild UI with new _certificateStatus
+  }
+
+  void _ambilDanUploadSertifikat(UserModel participant) async {
+    final picker = ImagePicker();
+    final pickedCertificate =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedCertificate != null) {
+      final File selectedCertificate = File(pickedCertificate.path);
+
+      final String certificateName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('certificate_images')
+          .child(certificateName);
+
+      final TaskSnapshot taskSnapshot =
+          await storageReference.putFile(selectedCertificate);
+      final certificateUrl = await taskSnapshot.ref.getDownloadURL();
+
+      final docRef =
+          FirebaseFirestore.instance.collection('users').doc(participant.uid);
+      await docRef.update({'certificateUrl': certificateUrl});
+
+      setState(() {
+        _certificateStatus[participant.uid] = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    widget.campaign.participants.sort((a, b) {
+      if ((_certificateStatus[a.uid] ?? false) &&
+          !(_certificateStatus[b.uid] ?? false)) {
+        return 1;
+      }
+      if (!(_certificateStatus[a.uid] ?? false) &&
+          (_certificateStatus[b.uid] ?? false)) {
+        return -1;
+      }
+      return 0;
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Kampanye'),
@@ -288,6 +349,17 @@ class _DetailKampanyeState extends State<DetailKampanye> {
               (participant) => ListTile(
                 leading: Icon(Icons.person),
                 title: Text(participant.name),
+                trailing: ElevatedButton(
+                  onPressed: () => _ambilDanUploadSertifikat(participant),
+                  child: Text(_certificateStatus[participant.uid] ?? false
+                      ? 'Sudah Upload'
+                      : 'Upload Sertifikat'),
+                  style: ElevatedButton.styleFrom(
+                    primary: _certificateStatus[participant.uid] ?? false
+                        ? Colors.green
+                        : Colors.blue,
+                  ),
+                ),
               ),
             ),
           ],
