@@ -352,23 +352,46 @@ class _DetailPendampingState extends State<DetailPendamping> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              try {
-                                final appointment = AppointmentModel(
-                                  userId: '',
-                                  companionId: '',
-                                  date: DateTime(
-                                    _selectedDate.year,
-                                    _selectedDate.month,
-                                    _selectedDate.day,
-                                    _selectedTime.hour,
-                                    _selectedTime.minute,
-                                  ),
-                                  locationDetail: locationDetailController.text,
-                                );
-                                await createAppointment(appointment);
-                                print('Appointment created');
-                              } catch (e) {
-                                print('Failed to create appointment: $e');
+                              if (locationDetailController.text.isEmpty) {
+                                // Tampilkan dialog error jika detail tempat kosong
+                                Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  title: "Gagal Membuat Janji Temu",
+                                  desc: "Mohon masukkan detail tempat",
+                                  buttons: [
+                                    DialogButton(
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                      width: 120,
+                                      color: Colors.red,
+                                    )
+                                  ],
+                                ).show();
+                              } else {
+                                try {
+                                  final appointment = AppointmentModel(
+                                    userId: '',
+                                    companionId: '',
+                                    date: DateTime(
+                                      _selectedDate.year,
+                                      _selectedDate.month,
+                                      _selectedDate.day,
+                                      _selectedTime.hour,
+                                      _selectedTime.minute,
+                                    ),
+                                    locationDetail:
+                                        locationDetailController.text,
+                                  );
+                                  await createAppointment(appointment);
+                                  print('Appointment created');
+                                } catch (e) {
+                                  print('Failed to create appointment: $e');
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(
