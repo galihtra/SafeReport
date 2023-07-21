@@ -380,6 +380,29 @@ class _DetailKampanyeState extends State<DetailKampanye> {
     }
   }
 
+  void _navigateToUpdate() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateKampanye(campaign: widget.campaign),
+      ),
+    );
+  }
+
+  Future<void> _hapusKampanye() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('campaigns')
+          .doc(widget.campaign.id)
+          .delete();
+
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error when deleting campaign: $e");
+      // handle error properly, i.e show error message to user
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final participants = [...widget.campaign.participants]; // make a copy
@@ -398,6 +421,16 @@ class _DetailKampanyeState extends State<DetailKampanye> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Kampanye'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: _navigateToUpdate,
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _hapusKampanye,
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -446,6 +479,260 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                   ),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Halaman Update
+class UpdateKampanye extends StatefulWidget {
+  final Campaign campaign;
+
+  const UpdateKampanye({Key? key, required this.campaign}) : super(key: key);
+
+  @override
+  _UpdateKampanyeState createState() => _UpdateKampanyeState();
+}
+
+class _UpdateKampanyeState extends State<UpdateKampanye> {
+  late TextEditingController _judulController;
+  late TextEditingController _deskripsiController;
+  late TextEditingController _linkZoomController;
+  late TextEditingController _nameSpeakerController;
+  late TextEditingController _placeController;
+
+  late DateTime _selectedDate;
+  late DateTime _selectedTime;
+
+  String? _selectedMeet;
+  File? _selectedImage;
+
+  final List<String> _meetOptions = ['luring', 'daring'];
+
+  @override
+  void initState() {
+    super.initState();
+    _judulController = TextEditingController(text: widget.campaign.title);
+    _deskripsiController =
+        TextEditingController(text: widget.campaign.description);
+    _linkZoomController =
+        TextEditingController(text: widget.campaign.zoomLink ?? '');
+    _nameSpeakerController =
+        TextEditingController(text: widget.campaign.nameSpeaker);
+    _placeController = TextEditingController(text: widget.campaign.place);
+    _selectedDate = widget.campaign.dateTime.toDate();
+    _selectedTime = widget.campaign.dateTime.toDate();
+    if (_meetOptions.contains(widget.campaign.meet)) {
+      _selectedMeet = widget.campaign.meet;
+    } else {
+      _selectedMeet = null;
+    }
+  }
+
+  bool isSameDateTime(DateTime dateTime1, DateTime dateTime2) {
+    return dateTime1.year == dateTime2.year &&
+        dateTime1.month == dateTime2.month &&
+        dateTime1.day == dateTime2.day &&
+        dateTime1.hour == dateTime2.hour &&
+        dateTime1.minute == dateTime2.minute;
+  }
+
+  Future<void> _updateKampanye() async {
+    final String judul = _judulController.text;
+    final String deskripsi = _deskripsiController.text;
+    final String zoomLink = _linkZoomController.text;
+    final String nameSpeaker = _nameSpeakerController.text;
+    final String place = _placeController.text;
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String adminId = user?.uid ?? '';
+
+    String imageUrl = widget.campaign.imageUrl;
+
+    if (_selectedImage != null) {
+      final String imageName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      final Reference storageReference = FirebaseStorage.instance
+          .ref()
+          .child('campaign_images')
+          .child(imageName);
+
+      final TaskSnapshot taskSnapshot =
+          await storageReference.putFile(_selectedImage!);
+      imageUrl = await taskSnapshot.ref.getDownloadURL();
+    }
+
+    Timestamp dateTime = widget.campaign.dateTime;
+
+    final DateTime oldDateTime = widget.campaign.dateTime.toDate();
+    final DateTime newDateTime = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _selectedTime.hour,
+      _selectedTime.minute,
+    );
+
+    if (!isSameDateTime(oldDateTime, newDateTime)) {
+      dateTime = Timestamp.fromDate(newDateTime);
+    }
+
+    if (_selectedMeet != null) {
+      final Campaign updatedCampaign = Campaign(
+        id: widget.campaign.id,
+        title: judul,
+        description: deskripsi,
+        adminId: adminId,
+        participants: widget.campaign.participants,
+        imageUrl: imageUrl,
+        dateTime: dateTime,
+        zoomLink: zoomLink.isNotEmpty ? zoomLink : null,
+        nameSpeaker: nameSpeaker,
+        place: place,
+        meet: _selectedMeet!,
+      );
+
+      try {
+        final DocumentReference campaignDocRef = FirebaseFirestore.instance
+            .collection('campaigns')
+            .doc(widget.campaign.id);
+
+        if (judul != widget.campaign.title ||
+            deskripsi != widget.campaign.description ||
+            zoomLink != (widget.campaign.zoomLink ?? '') ||
+            nameSpeaker != widget.campaign.nameSpeaker ||
+            place != widget.campaign.place ||
+            _selectedMeet != widget.campaign.meet ||
+            imageUrl != widget.campaign.imageUrl ||
+            !isSameDateTime(oldDateTime, newDateTime)) {
+          await campaignDocRef.update(updatedCampaign.toJson());
+        }
+      } catch (error) {
+        print('Error when updating campaign: $error');
+      } finally {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  Future<void> _ambilGambar() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Update Kampanye'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            TextField(
+              controller: _judulController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan judul',
+              ),
+            ),
+            TextField(
+              controller: _deskripsiController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan deskripsi',
+              ),
+            ),
+            SizedBox(height: 16),
+            InkWell(
+              onTap: _ambilGambar,
+              child: _selectedImage != null
+                  ? Image.file(
+                      _selectedImage!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey,
+                      child: Icon(
+                        Icons.image,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+            SizedBox(height: 16),
+            DatePicker(
+              DateTime.now(),
+              initialSelectedDate: DateTime.now(),
+              selectionColor: Colors.black,
+              selectedTextColor: Colors.white,
+              onDateChange: (date) {
+                setState(() {
+                  _selectedDate = date;
+                });
+              },
+            ),
+            TimePickerSpinner(
+              is24HourMode: true,
+              normalTextStyle:
+                  TextStyle(fontSize: 24, color: Colors.deepOrange),
+              highlightedTextStyle:
+                  TextStyle(fontSize: 24, color: Colors.yellow),
+              spacing: 50,
+              itemHeight: 80,
+              isForce2Digits: true,
+              onTimeChange: (time) {
+                setState(() {
+                  _selectedTime = time;
+                });
+              },
+            ),
+            TextField(
+              controller: _linkZoomController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan link Zoom',
+              ),
+            ),
+            TextField(
+              controller: _nameSpeakerController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan nama pembicara',
+              ),
+            ),
+            TextField(
+              controller: _placeController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan lokasi pertemuan',
+              ),
+            ),
+            DropdownButtonFormField(
+              hint: Text('Pilih metode pertemuan'),
+              value: _selectedMeet,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedMeet = newValue;
+                });
+              },
+              items: _meetOptions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            ElevatedButton(
+              child: Text('Update Kampanye'),
+              onPressed: _updateKampanye,
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:safe_report/model/campaign_model.dart';
 import 'package:safe_report/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +18,7 @@ class ListKampanye extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "List Kampanye",
+          "Kampanye Mendatang",
           style: GoogleFonts.inter(
             color: Colors.black,
             fontWeight: FontWeight.w600,
@@ -46,17 +47,109 @@ class ListKampanye extends StatelessWidget {
                       ),
                     );
                   },
-                  child: ListTile(
-                    title: Text(campaign.title),
-                    subtitle: Text(campaign.description),
-                    leading: campaign.imageUrl.isNotEmpty
-                        ? Image.network(
-                            campaign.imageUrl,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          )
-                        : null,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(right: 15, left: 15, bottom: 15),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15), // Radius of 15
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          if (campaign.imageUrl.isNotEmpty)
+                            ClipRRect(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(15),
+                              ),
+                              child: Image.network(
+                                campaign.imageUrl,
+                                fit: BoxFit.cover,
+                                height: 120,
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  campaign.title,
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.access_time,
+                                          size: 14,
+                                          color: Colors.blue,
+                                        ),
+                                        SizedBox(
+                                            width:
+                                                5), // Spacing between the icon and text
+                                        Text(
+                                          DateFormat('HH:mm').format(
+                                                  campaign.dateTime.toDate()) +
+                                              ' WIB',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                Color.fromARGB(255, 33, 33, 33),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.date_range,
+                                          size: 14,
+                                          color: Colors.blue,
+                                        ),
+                                        SizedBox(
+                                            width:
+                                                5), // Spacing between the icon and text
+                                        Text(
+                                          DateFormat('dd MMMM yyyy').format(
+                                              campaign.dateTime.toDate()),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  campaign.description,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               },
