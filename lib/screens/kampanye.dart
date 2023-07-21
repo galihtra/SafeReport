@@ -593,7 +593,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                           Text(
                             widget.campaign.title,
                             style: GoogleFonts.inter(
-                              fontSize: 20,
+                              fontSize: 22,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF263257),
                             ),
@@ -611,7 +611,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                           Text(
                             'Pemateri',
                             style: GoogleFonts.inter(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF263257),
                             ),
@@ -677,7 +677,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                           Text(
                             'Tempat',
                             style: GoogleFonts.inter(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF263257),
                             ),
@@ -697,7 +697,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                           Text(
                             'Peserta yang mengikuti',
                             style: GoogleFonts.inter(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.w500,
                               color: Color(0xFF263257),
                             ),
