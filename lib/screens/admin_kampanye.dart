@@ -432,55 +432,57 @@ class _DetailKampanyeState extends State<DetailKampanye> {
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.campaign.title,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.campaign.title,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Image.network(widget.campaign.imageUrl),
-            SizedBox(height: 16),
-            Text(
-              'Deskripsi',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 16),
+              Image.network(widget.campaign.imageUrl),
+              SizedBox(height: 16),
+              Text(
+                'Deskripsi',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Text(widget.campaign.description),
-            SizedBox(height: 16),
-            Text(
-              'Partisipan',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+              Text(widget.campaign.description),
+              SizedBox(height: 16),
+              Text(
+                'Partisipan',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            ...participants.map(
-              (participant) => ListTile(
-                leading: Icon(Icons.person),
-                title: Text(participant.name),
-                trailing: ElevatedButton(
-                  onPressed: () => _ambilDanUploadSertifikat(participant),
-                  child: Text(_certificateStatus[participant.uid] ?? false
-                      ? 'Sudah Upload'
-                      : 'Upload Sertifikat'),
-                  style: ElevatedButton.styleFrom(
-                    primary: _certificateStatus[participant.uid] ?? false
-                        ? Colors.green
-                        : Colors.blue,
+              ...participants.map(
+                (participant) => ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text(participant.name),
+                  trailing: ElevatedButton(
+                    onPressed: () => _ambilDanUploadSertifikat(participant),
+                    child: Text(_certificateStatus[participant.uid] ?? false
+                        ? 'Sudah Upload'
+                        : 'Upload Sertifikat'),
+                    style: ElevatedButton.styleFrom(
+                      primary: _certificateStatus[participant.uid] ?? false
+                          ? Colors.green
+                          : Colors.blue,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

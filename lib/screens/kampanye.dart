@@ -10,7 +10,15 @@ import 'package:safe_report/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class ListKampanye extends StatelessWidget {
+class ListKampanye extends StatefulWidget {
+  @override
+  _ListKampanyeState createState() => _ListKampanyeState();
+}
+
+class _ListKampanyeState extends State<ListKampanye> {
+  String _filter = 'Semua Kategori';
+  bool _isDescending = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +26,7 @@ class ListKampanye extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "Kampanye Mendatang",
+          "Semua Kampanye",
           style: GoogleFonts.inter(
             color: Colors.black,
             fontWeight: FontWeight.w600,
@@ -27,137 +35,299 @@ class ListKampanye extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('campaigns').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final List<DocumentSnapshot> campaignDocs = snapshot.data!.docs;
-            return ListView.builder(
-              itemCount: campaignDocs.length,
-              itemBuilder: (context, index) {
-                final Campaign campaign =
-                    Campaign.fromSnapshot(campaignDocs[index]);
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetailKampanye(campaign: campaign),
-                      ),
+      body: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 20.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0), // Radius
+                color: Colors.white,
+                border:
+                    Border.all(color: Color(0xFF667085), width: 0.5), // Border
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: _filter,
+                  style: GoogleFonts.inter(
+                    color: Color(0xFF667085),
+                  ),
+                  items: <String>[
+                    'Semua Kategori',
+                    'kampanye jangka panjang',
+                    'kampanye mendatang',
+                  ].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
                     );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _filter = newValue!;
+                      _isDescending =
+                          newValue == 'kampanye jangka panjang' ? true : false;
+                    });
                   },
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(right: 15, left: 15, bottom: 15),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15), // Radius of 15
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          if (campaign.imageUrl.isNotEmpty)
-                            ClipRRect(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(15),
-                              ),
-                              child: Image.network(
-                                campaign.imageUrl,
-                                fit: BoxFit.cover,
-                                height: 120,
-                              ),
+                  dropdownColor: Colors.white,
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('campaigns')
+                  .orderBy('dateTime', descending: _isDescending)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final List<DocumentSnapshot> campaignDocs =
+                      snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: campaignDocs.length,
+                    itemBuilder: (context, index) {
+                      final Campaign campaign =
+                          Campaign.fromSnapshot(campaignDocs[index]);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailKampanye(campaign: campaign),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, bottom: 15),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              right: 15, left: 15, bottom: 15),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  campaign.title,
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.access_time,
-                                          size: 14,
-                                          color: Colors.blue,
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                5), // Spacing between the icon and text
-                                        Text(
-                                          DateFormat('HH:mm').format(
-                                                  campaign.dateTime.toDate()) +
-                                              ' WIB',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color:
-                                                Color.fromARGB(255, 33, 33, 33),
+                                if (campaign.imageUrl.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(15),
+                                    ),
+                                    child: Image.network(
+                                      campaign.imageUrl,
+                                      fit: BoxFit.cover,
+                                      height: 120,
+                                    ),
+                                  ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15, right: 15, bottom: 15),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        campaign.title,
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.access_time,
+                                                size: 14,
+                                                color: Colors.blue,
+                                              ),
+                                              SizedBox(width: 5),
+                                              Text(
+                                                DateFormat('HH:mm').format(
+                                                        campaign.dateTime
+                                                            .toDate()) +
+                                                    ' WIB',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color.fromARGB(
+                                                      255, 33, 33, 33),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 25,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.date_range,
-                                          size: 14,
-                                          color: Colors.blue,
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                5), // Spacing between the icon and text
-                                        Text(
-                                          DateFormat('dd MMMM yyyy').format(
-                                              campaign.dateTime.toDate()),
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black,
+                                          SizedBox(
+                                            width: 25,
                                           ),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.date_range,
+                                                size: 14,
+                                                color: Colors.blue,
+                                              ),
+                                              SizedBox(width: 5),
+                                              Text(
+                                                DateFormat('dd MMMM yyyy')
+                                                    .format(campaign.dateTime
+                                                        .toDate()),
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        campaign.description.length > 150
+                                            ? '${campaign.description.substring(0, 150)}...'
+                                            : campaign.description,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          color: Color(0xFF667085),
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  campaign.description,
-                                  style: TextStyle(fontSize: 14),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Divider(
+                                        color: Colors.black,
+                                        thickness: 0.1,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        "Pemateri:",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: Color(0xFF667085),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        campaign.nameSpeaker,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        "Tempat",
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: Color(0xFF667085),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        campaign.place,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            height: 28,
+                                            width: 65,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFF4E8EA),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                campaign.meet,
+                                                style: GoogleFonts.inter(
+                                                  color: Color(0xFFEC407A),
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          Container(
+                                            height: 40,
+                                            width: 130,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFEC407A),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "Gabung",
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text("Terjadi kesalahan"),
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
                 );
               },
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
