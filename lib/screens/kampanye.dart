@@ -9,6 +9,8 @@ import 'package:safe_report/model/campaign_model.dart';
 import 'package:safe_report/model/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:safe_report/screens/kampanye_notif.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ListKampanye extends StatefulWidget {
   @override
@@ -503,60 +505,260 @@ class _DetailKampanyeState extends State<DetailKampanye> {
         setState(() {
           isJoined = true;
         });
+
+        // Tampilkan dialog kalau berhasil bergabung
+        Alert(
+          context: context,
+          type: AlertType.success,
+          title: "BERHASIL BERGABUNG",
+          desc: "Anda telah berhasil bergabung dalam kampanye.",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "OK",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () {
+                // Tutup dialog dan navigasi ke halaman KampanyeNotif setelah mengklik 'OK'
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => KampanyeNotif(),
+                  ),
+                );
+              },
+              width: 120,
+            )
+          ],
+        ).show();
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.campaign.title),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.campaign.title,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            Image.network(widget.campaign.imageUrl),
-            SizedBox(height: 16),
-            Text(
-              'Deskripsi',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(widget.campaign.description),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: isJoined ? null : joinCampaign,
-              child: Text(
-                isJoined ? 'Sudah Bergabung' : 'Bergabung',
-                style: TextStyle(color: Colors.white),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.disabled)) {
-                      return Colors.green;
-                    }
-                    return Colors.blue; // Use the component's default.
-                  },
-                ),
-              ),
-            ),
-          ],
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(''),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
         ),
-      ),
-    );
+        body: SingleChildScrollView(
+          child: Container(
+            height: size.height,
+            child: Stack(
+              children: [
+                Container(
+                  height: size.height * 0.35,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: (widget.campaign.imageUrl != null)
+                          ? NetworkImage(widget.campaign.imageUrl!)
+                              as ImageProvider
+                          : AssetImage('assets/images/default_avatar.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: size.height * 0.75,
+                    width: size.width,
+                    margin: EdgeInsets.only(top: size.height * 0.3),
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 10,
+                          blurRadius: 10,
+                          offset: Offset(0, 0),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.campaign.title,
+                            style: GoogleFonts.inter(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.campaign.description,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xFF667085),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            'Pemateri',
+                            style: GoogleFonts.inter(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.campaign.nameSpeaker,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xFF667085),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            'Jam & Tanggal',
+                            style: GoogleFonts.inter(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text(
+                                DateFormat('HH:mm').format(
+                                        widget.campaign.dateTime.toDate()) +
+                                    ' WIB',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Color(0xFF667085),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Icon(
+                                Icons.access_time,
+                                size: 20,
+                                color: Color(0xFFEC407A),
+                              ),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              Text(
+                                DateFormat('dd MMMM yyyy')
+                                    .format(widget.campaign.dateTime.toDate()),
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Color(0xFF667085),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Icon(
+                                Icons.date_range,
+                                size: 20,
+                                color: Color(0xFFEC407A),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            'Tempat',
+                            style: GoogleFonts.inter(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            widget.campaign.place,
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xFF667085),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'Peserta yang mengikuti',
+                            style: GoogleFonts.inter(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF263257),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.person,
+                                size: 20,
+                                color: Color(0xFFEC407A),
+                              ),
+                              SizedBox(width: 5),
+                              Text(
+                                widget.campaign.participants.length.toString(),
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Color(0xFF667085),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ElevatedButton(
+                            onPressed: isJoined ? null : joinCampaign,
+                            child: Text(
+                              isJoined ? 'Sudah Bergabung' : 'Bergabung',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ButtonStyle(
+                              minimumSize: MaterialStateProperty.all<Size>(
+                                  Size(350, 55)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                              ),
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.disabled)) {
+                                    return Colors.green;
+                                  }
+                                  return Color(
+                                      0xFFEC407A); // Use the component's default.
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }

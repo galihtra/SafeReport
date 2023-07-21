@@ -7,6 +7,7 @@ import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:safe_report/model/Appointment.dart';
 import 'package:safe_report/model/user_model.dart';
 import 'pendampingan_notif.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Pendampingan extends StatefulWidget {
   const Pendampingan({Key? key}) : super(key: key);
@@ -166,71 +167,31 @@ class _DetailPendampingState extends State<DetailPendamping> {
           .add(appointment.toMap());
 
       // Show success dialog
-      showDialog(
+      Alert(
         context: context,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
+        type: AlertType.success,
+        title: "Berhasil Membuat Janji Temu",
+        desc: "Janji temu anda telah diatur",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
             ),
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                      ),
-                      SizedBox(width: 8.0),
-                      Text(
-                        'Berhasil Membuat Janji Temu',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Janji temu anda telah diatur',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(height: 30.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PendampinganNotif(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'OK',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PendampinganNotif(),
+                ),
+              );
+            },
+            width: 120,
+            color: Colors.green,
+          )
+        ],
+      ).show();
     } else {
       throw Exception('No user found');
     }
