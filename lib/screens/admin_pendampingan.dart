@@ -229,6 +229,9 @@ class _AdminPendampinganState extends State<AdminPendampingan> {
                                             : Colors.black,
                                       ),
                                     ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
                                     Text(
                                       'Tempat: ${appointment.locationDetail}',
                                       style: TextStyle(

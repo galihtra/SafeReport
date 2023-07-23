@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:safe_report/model/campaign_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -26,7 +27,17 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daftar Kampanye'),
+        title: Text(
+          'Daftar Kampanye',
+          style: GoogleFonts.inter(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: campaignsRef.snapshots(),
@@ -49,7 +60,15 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
                 ),
                 child: ListTile(
                   title: Text(campaign.title),
-                  subtitle: Text(campaign.description),
+                  subtitle: Text(
+                    campaign.description.length > 120
+                        ? '${campaign.description.substring(0, 120)}...'
+                        : campaign.description,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: Color(0xFF667085),
+                    ),
+                  ),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
@@ -83,7 +102,7 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
           );
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xFFEC407A),
       ),
     );
   }
@@ -188,6 +207,7 @@ class _BuatKampanyeState extends State<BuatKampanye> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Buat Kampanye Baru'),
+        backgroundColor: Color(0xFFEC407A), // Merubah warna AppBar
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -197,12 +217,29 @@ class _BuatKampanyeState extends State<BuatKampanye> {
               controller: _judulController,
               decoration: InputDecoration(
                 hintText: 'Masukkan judul',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _deskripsiController,
               decoration: InputDecoration(
                 hintText: 'Masukkan deskripsi',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
             SizedBox(height: 16),
@@ -212,12 +249,12 @@ class _BuatKampanyeState extends State<BuatKampanye> {
                   ? Image.file(
                       _selectedImage!,
                       width: 100,
-                      height: 100,
+                      height: 200,
                       fit: BoxFit.cover,
                     )
                   : Container(
                       width: 100,
-                      height: 100,
+                      height: 200,
                       color: Colors.grey,
                       child: Icon(
                         Icons.image,
@@ -229,7 +266,7 @@ class _BuatKampanyeState extends State<BuatKampanye> {
             DatePicker(
               DateTime.now(),
               initialSelectedDate: DateTime.now(),
-              selectionColor: Colors.black,
+              selectionColor: Color(0xFFEC407A),
               selectedTextColor: Colors.white,
               onDateChange: (date) {
                 setState(() {
@@ -238,11 +275,10 @@ class _BuatKampanyeState extends State<BuatKampanye> {
               },
             ),
             TimePickerSpinner(
-              is24HourMode: true,
-              normalTextStyle:
-                  TextStyle(fontSize: 24, color: Colors.deepOrange),
+              is24HourMode: false,
+              normalTextStyle: TextStyle(fontSize: 24, color: Colors.grey),
               highlightedTextStyle:
-                  TextStyle(fontSize: 24, color: Colors.yellow),
+                  TextStyle(fontSize: 24, color: Color(0xFFEC407A)),
               spacing: 50,
               itemHeight: 80,
               isForce2Digits: true,
@@ -256,20 +292,47 @@ class _BuatKampanyeState extends State<BuatKampanye> {
               controller: _linkZoomController,
               decoration: InputDecoration(
                 hintText: 'Masukkan link Zoom',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _nameSpeakerController,
               decoration: InputDecoration(
                 hintText: 'Masukkan nama pembicara',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _placeController,
               decoration: InputDecoration(
                 hintText: 'Masukkan lokasi pertemuan',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             DropdownButtonFormField(
               hint: Text('Pilih metode pertemuan'),
               value: _selectedMeet,
@@ -284,10 +347,33 @@ class _BuatKampanyeState extends State<BuatKampanye> {
                   child: Text(value),
                 );
               }).toList(),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
+              ),
             ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: _buatKampanye,
               child: Text('Buat Kampanye'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(350, 55),
+                primary: Color(0xFFEC407A), // Merubah warna button
+                textStyle: TextStyle(fontSize: 20), // Merubah ukuran teks
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),
@@ -330,7 +416,10 @@ class _DetailKampanyeState extends State<DetailKampanye> {
       print("Error: $e");
       // handle error properly, i.e show error message to user
     }
-    setState(() {}); // Rebuild UI with new _certificateStatus
+
+    if (mounted) {
+      setState(() {}); // Rebuild UI with new _certificateStatus
+    }
   }
 
   void _ambilDanUploadSertifikat(UserModel participant) async {
@@ -420,6 +509,7 @@ class _DetailKampanyeState extends State<DetailKampanye> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFEC407A),
         title: Text('Detail Kampanye'),
         actions: <Widget>[
           IconButton(
@@ -446,7 +536,12 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                 ),
               ),
               SizedBox(height: 16),
-              Image.network(widget.campaign.imageUrl),
+              Image.network(
+                widget.campaign.imageUrl,
+                width: MediaQuery.of(context).size.width,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
               SizedBox(height: 16),
               Text(
                 'Deskripsi',
@@ -455,7 +550,103 @@ class _DetailKampanyeState extends State<DetailKampanye> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              SizedBox(
+                height: 5,
+              ),
               Text(widget.campaign.description),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 14,
+                        color: Color(0xFFEC407A),
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        DateFormat('HH:mm')
+                                .format(widget.campaign.dateTime.toDate()) +
+                            ' WIB',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromARGB(255, 33, 33, 33),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.date_range,
+                        size: 14,
+                        color: Color(0xFFEC407A),
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        DateFormat('dd MMMM yyyy')
+                            .format(widget.campaign.dateTime.toDate()),
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Nama Pembicara: ",
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                widget.campaign.nameSpeaker,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Detail Tempat: ",
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                widget.campaign.place,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Link Zoom: ",
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                widget.campaign.zoomLink?.isEmpty ?? true
+                    ? 'Tidak ada Zoom'
+                    : widget.campaign.zoomLink!,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               SizedBox(height: 16),
               Text(
                 'Partisipan',
@@ -635,6 +826,7 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Kampanye'),
+        backgroundColor: Color(0xFFEC407A), // Merubah warna AppBar
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -644,12 +836,29 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
               controller: _judulController,
               decoration: InputDecoration(
                 hintText: 'Masukkan judul',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _deskripsiController,
               decoration: InputDecoration(
                 hintText: 'Masukkan deskripsi',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
             SizedBox(height: 16),
@@ -659,12 +868,12 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
                   ? Image.file(
                       _selectedImage!,
                       width: 100,
-                      height: 100,
+                      height: 200,
                       fit: BoxFit.cover,
                     )
                   : Container(
                       width: 100,
-                      height: 100,
+                      height: 200,
                       color: Colors.grey,
                       child: Icon(
                         Icons.image,
@@ -676,7 +885,7 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
             DatePicker(
               DateTime.now(),
               initialSelectedDate: DateTime.now(),
-              selectionColor: Colors.black,
+              selectionColor: Color(0xFFEC407A),
               selectedTextColor: Colors.white,
               onDateChange: (date) {
                 setState(() {
@@ -685,11 +894,10 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
               },
             ),
             TimePickerSpinner(
-              is24HourMode: true,
-              normalTextStyle:
-                  TextStyle(fontSize: 24, color: Colors.deepOrange),
+              is24HourMode: false,
+              normalTextStyle: TextStyle(fontSize: 24, color: Colors.grey),
               highlightedTextStyle:
-                  TextStyle(fontSize: 24, color: Colors.yellow),
+                  TextStyle(fontSize: 24, color: Color(0xFFEC407A)),
               spacing: 50,
               itemHeight: 80,
               isForce2Digits: true,
@@ -703,20 +911,47 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
               controller: _linkZoomController,
               decoration: InputDecoration(
                 hintText: 'Masukkan link Zoom',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _nameSpeakerController,
               decoration: InputDecoration(
                 hintText: 'Masukkan nama pembicara',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _placeController,
               decoration: InputDecoration(
                 hintText: 'Masukkan lokasi pertemuan',
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
               ),
             ),
+            SizedBox(height: 16),
             DropdownButtonFormField(
               hint: Text('Pilih metode pertemuan'),
               value: _selectedMeet,
@@ -731,10 +966,33 @@ class _UpdateKampanyeState extends State<UpdateKampanye> {
                   child: Text(value),
                 );
               }).toList(),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                  borderSide: BorderSide(
+                      color: Color(0xFFEC407A)), // Merubah warna border
+                ),
+                filled: true,
+                fillColor: Colors.grey[200], // Merubah fill color
+              ),
             ),
+            SizedBox(height: 16),
             ElevatedButton(
-              child: Text('Update Kampanye'),
               onPressed: _updateKampanye,
+              child: Text('Update Kampanye'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(350, 55),
+                primary: Color(0xFFEC407A), // Merubah warna button
+                textStyle: TextStyle(fontSize: 20), // Merubah ukuran teks
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Menambahkan border radius
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
           ],
         ),
