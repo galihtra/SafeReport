@@ -105,6 +105,8 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8),
                               bottomLeft: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                              topRight: Radius.circular(8),
                             ),
                           ),
                           child: Text(
