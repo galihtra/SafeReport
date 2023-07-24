@@ -217,7 +217,8 @@ class _KampanyeNotifState extends State<KampanyeNotif> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      if (campaign.zoomLink != "")
+                                      if (campaign.zoomLink != null &&
+                                          campaign.zoomLink != "")
                                         ElevatedButton.icon(
                                           icon: Icon(Icons.video_call,
                                               color: Colors.white),
@@ -231,12 +232,11 @@ class _KampanyeNotifState extends State<KampanyeNotif> {
                                                 MaterialStateProperty.all<
                                                     Color>(Color(0xFFEC407A)),
                                             shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20))),
                                           ),
                                         )
                                       else
@@ -249,18 +249,15 @@ class _KampanyeNotifState extends State<KampanyeNotif> {
                                           onPressed: null, // Disabled button
                                           style: ButtonStyle(
                                             backgroundColor:
-                                                MaterialStateProperty.all<
-                                                    Color>(
-                                              Color.fromARGB(
-                                                  255, 227, 225, 225),
-                                            ),
+                                                MaterialStateProperty
+                                                    .all<Color>(Color.fromARGB(
+                                                        255, 227, 225, 225)),
                                             shape: MaterialStateProperty.all<
-                                                RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20))),
                                           ),
                                         ),
                                       Visibility(
