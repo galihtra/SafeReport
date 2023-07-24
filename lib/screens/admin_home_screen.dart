@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:safe_report/screens/admin_pendampingan.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
@@ -13,6 +14,10 @@ class AdminHomeScreen extends StatefulWidget {
 }
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
+  late final FirebaseAuth _auth;
+  late final User? _user;
+  late final String _companionId;
+
   Future<DocumentSnapshot> getUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -28,11 +33,20 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _auth = FirebaseAuth.instance;
+    _user = _auth.currentUser;
+
+    if (_user != null) {
+      _companionId = _user!.uid;
+    } else {
+      // handle this case where _user is null
+    }
     fetchArticles();
   }
 
   void fetchArticles() async {
-    final QuerySnapshot snapshot = await _firestore.collection('articles').get();
+    final QuerySnapshot snapshot =
+        await _firestore.collection('articles').get();
 
     setState(() {
       articles = snapshot.docs.map((doc) {
@@ -51,9 +65,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
       future: getUserData(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+          Map<String, dynamic> data =
+              snapshot.data!.data() as Map<String, dynamic>;
           return Scaffold(
             body: ListView(
               children: <Widget>[
@@ -74,7 +90,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           else
                             CircleAvatar(
                               backgroundColor: Colors.white,
-                              backgroundImage: AssetImage('assets/images/default_avatar.png'),
+                              backgroundImage: AssetImage(
+                                  'assets/images/default_avatar.png'),
                               radius: 22,
                             ),
                           Spacer(),
@@ -129,7 +146,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Colors.red,
-                                    child: Image.asset("assets/images/rescue_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/rescue_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -144,28 +162,39 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ),
                           ),
                           // Pendampingan
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  width: 75,
-                                  height: 75,
-                                  color: Color(0xFFF4E8EA),
-                                  child: Image.asset("assets/images/pendampingan_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AdminPendampingan(
+                                        companionId: _companionId)),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    width: 75,
+                                    height: 75,
+                                    color: Color(0xFFF4E8EA),
+                                    child: Image.asset(
+                                        "assets/images/pendampingan_logo.png"),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Pendampingan",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFF9D9D9D),
+                                SizedBox(height: 8),
+                                Text(
+                                  "Pendampingan",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF9D9D9D),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           // Konsultasi Online
                           Padding(
@@ -181,7 +210,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/konsultasi_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/konsultasi_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -227,7 +257,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     width: 75,
                                     height: 75,
                                     color: Color(0xFFF4E8EA),
-                                    child: Image.asset("assets/images/edukasi_logo.png"),
+                                    child: Image.asset(
+                                        "assets/images/edukasi_logo.png"),
                                   ),
                                 ),
                                 SizedBox(height: 8),
@@ -252,7 +283,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                   width: 75,
                                   height: 75,
                                   color: Color(0xFFF4E8EA),
-                                  child: Image.asset("assets/images/kampanye_logo.png"),
+                                  child: Image.asset(
+                                      "assets/images/kampanye_logo.png"),
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -266,17 +298,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ],
                           ),
                           // Pelaporan
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PelaporanAdmin()),
-                              );
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PelaporanAdmin()),
+                                );
+                              },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -330,13 +361,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/rs.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/rs.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Rumah Sakit',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -359,13 +392,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/pemadam.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/pemadam.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Pemadam Kebakaran',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -388,13 +423,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                               CircleAvatar(
                                                 radius: 25,
                                                 backgroundColor: Colors.red,
-                                                backgroundImage: AssetImage('assets/images/polisi.png'),
+                                                backgroundImage: AssetImage(
+                                                    'assets/images/polisi.png'),
                                               ),
                                               SizedBox(width: 10),
                                               Expanded(
                                                 child: Text(
                                                   'Kantor Polisi',
-                                                  style: TextStyle(fontSize: 16),
+                                                  style:
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                               ),
                                               SizedBox(width: 20),
@@ -466,7 +503,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ArticleDetailScreen(article: articles[index]),
+                                      builder: (context) => ArticleDetailScreen(
+                                          article: articles[index]),
                                     ),
                                   );
                                 },
@@ -480,7 +518,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                       Container(
                                         margin: EdgeInsets.only(top: 20.0),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10.0),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
                                           child: Container(
                                             height: 150.0,
                                             width: 320.0,
@@ -500,7 +539,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                         ),
                                         title: Text(
                                           articles[index].title.length > 150
-                                              ? articles[index].title.substring(0, 150) + '...'
+                                              ? articles[index]
+                                                      .title
+                                                      .substring(0, 150) +
+                                                  '...'
                                               : articles[index].title,
                                           style: GoogleFonts.inter(
                                             fontSize: 18,
@@ -508,8 +550,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           ),
                                         ),
                                         subtitle: Text(
-                                          articles[index].description.length > 150
-                                              ? articles[index].description.substring(0, 150) + '...'
+                                          articles[index].description.length >
+                                                  150
+                                              ? articles[index]
+                                                      .description
+                                                      .substring(0, 150) +
+                                                  '...'
                                               : articles[index].description,
                                           style: GoogleFonts.inter(
                                             fontSize: 14,

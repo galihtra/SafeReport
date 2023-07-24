@@ -47,12 +47,13 @@ dependencies:
   flutter_icons: ^1.1.0
   url_launcher: ^6.0.10
   share: ^2.0.4
+  flutter_time_picker_spinner: ^2.0.0
+  date_picker_timeline: ^1.1.9
   date_time_picker: ^2.1.0
+  intl: ^0.17.0
   file_picker: ^5.3.1
-  pdf: ^3.8.4
-  open_file: ^3.3.2
-  flutter_downloader: ^1.6.4
-  path_provider: ^2.0.5
+  im_stepper: ^1.0.1+1
+  collection: ^1.15.0
 
 dev_dependencies:
   flutter_test:
@@ -103,6 +104,19 @@ flutter:
     - assets/images/camera.png
     - assets/images/tambah.png
     - assets/images/cecklis.png
+    - assets/images/Check_active.png
+    - assets/images/Check_nonactive.png
+    - assets/images/Vector_active.png
+    - assets/images/Vector_nonactive.png
+    - assets/images/Done all_active.png
+    - assets/images/Done all_nonactive.png
+    - assets/images/Proses_active.png
+    - assets/images/Proses_nonactive.png
+    - assets/images/Assignment.png
+    - assets/images/history_active.png
+    - assets/images/history_nonactive.png
+
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
