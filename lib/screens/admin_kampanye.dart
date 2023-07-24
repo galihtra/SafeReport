@@ -23,6 +23,11 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
   final CollectionReference campaignsRef =
       FirebaseFirestore.instance.collection('campaigns');
 
+  bool isAppointmentExpired(DateTime dateTime) {
+    final now = DateTime.now();
+    return now.isAfter(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +45,7 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: campaignsRef.snapshots(),
+        stream: campaignsRef.orderBy('dateTime').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text('Something went wrong');
@@ -50,16 +55,68 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
             return CircularProgressIndicator();
           }
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Campaign campaign = Campaign.fromSnapshot(document);
+          List<Campaign> campaigns = snapshot.data!.docs
+              .map((document) => Campaign.fromSnapshot(document))
+              .toList();
+
+          campaigns.sort((a, b) {
+            final aExpired = isAppointmentExpired(a.dateTime.toDate());
+            final bExpired = isAppointmentExpired(b.dateTime.toDate());
+
+            if (aExpired && !bExpired) {
+              return 1;
+            } else if (!aExpired && bExpired) {
+              return -1;
+            } else {
+              return a.dateTime.compareTo(b.dateTime);
+            }
+          });
+
+          return ListView.builder(
+            itemCount: campaigns.length,
+            itemBuilder: (context, index) {
+              Campaign campaign = campaigns[index];
+              final bool isExpired =
+                  isAppointmentExpired(campaign.dateTime.toDate());
+
               return Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: ListTile(
-                  title: Text(campaign.title),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          campaign.title,
+                          style: GoogleFonts.inter(
+                              fontSize: 18,
+                              color: Color(0xFFEC407A),
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      if (isExpired)
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Selesai',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                   subtitle: Text(
                     campaign.description.length > 120
                         ? '${campaign.description.substring(0, 120)}...'
@@ -78,7 +135,6 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
                       height: 60,
                     ),
                   ),
-                  trailing: Icon(Icons.arrow_forward),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -90,7 +146,7 @@ class _KampanyeScreenState extends State<KampanyeScreen> {
                   },
                 ),
               );
-            }).toList(),
+            },
           );
         },
       ),
