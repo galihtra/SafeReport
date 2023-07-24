@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:safe_report/model/certificate_model.dart';
+
 class UserModel {
   String uid;
   String name;
@@ -8,6 +11,7 @@ class UserModel {
   String? image_url;
   String? prodi;
   String? no_telp;
+  List<Certificate>? certificates;
 
   UserModel({
     required this.uid,
@@ -19,6 +23,7 @@ class UserModel {
     this.bio,
     this.prodi,
     this.no_telp,
+    this.certificates,
   });
 
   factory UserModel.fromMap(Map<String, dynamic>? map) {
@@ -35,7 +40,14 @@ class UserModel {
       bio: map['bio'],
       prodi: map['prodi'],
       no_telp: map['no_telp'],
+      certificates: map.containsKey('certificates') && map['certificates'] != null
+        ? (map['certificates'] as List).map((cert) => Certificate.fromMap(cert)).toList()
+        : null,
     );
+  }
+
+  factory UserModel.fromSnapshot(DocumentSnapshot doc) {
+    return UserModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 
   Map<String, dynamic> toMap() {
@@ -49,6 +61,7 @@ class UserModel {
       'bio': bio,
       'prodi': prodi,
       'no_telp': no_telp,
+      'certificates': certificates?.map((certificate) => certificate.toMap()).toList(),
     };
   }
 }

@@ -6,6 +6,8 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:safe_report/model/Appointment.dart';
 import 'package:safe_report/model/user_model.dart';
+import 'pendampingan_notif.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class Pendampingan extends StatefulWidget {
   const Pendampingan({Key? key}) : super(key: key);
@@ -45,8 +47,7 @@ class _PendampinganState extends State<Pendampingan> {
             padding: const EdgeInsets.all(10.0),
             child: ListView(
               children: snapshot.data!.docs.map((doc) {
-                Map<String, dynamic> data =
-                    doc.data() as Map<String, dynamic>;
+                Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
                 UserModel user = UserModel.fromMap(data);
                 return InkWell(
                   onTap: () {
@@ -164,6 +165,33 @@ class _DetailPendampingState extends State<DetailPendamping> {
       await FirebaseFirestore.instance
           .collection('appointments')
           .add(appointment.toMap());
+
+      // Show success dialog
+      Alert(
+        context: context,
+        type: AlertType.success,
+        title: "Berhasil Membuat Janji Temu",
+        desc: "Janji temu anda telah diatur",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "OK",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PendampinganNotif(),
+                ),
+              );
+            },
+            width: 120,
+            color: Colors.green,
+          )
+        ],
+      ).show();
     } else {
       throw Exception('No user found');
     }
@@ -324,23 +352,46 @@ class _DetailPendampingState extends State<DetailPendamping> {
                         Center(
                           child: ElevatedButton(
                             onPressed: () async {
-                              try {
-                                final appointment = AppointmentModel(
-                                  userId: '',
-                                  companionId: '',
-                                  date: DateTime(
-                                    _selectedDate.year,
-                                    _selectedDate.month,
-                                    _selectedDate.day,
-                                    _selectedTime.hour,
-                                    _selectedTime.minute,
-                                  ),
-                                  locationDetail: locationDetailController.text,
-                                );
-                                await createAppointment(appointment);
-                                print('Appointment created');
-                              } catch (e) {
-                                print('Failed to create appointment: $e');
+                              if (locationDetailController.text.isEmpty) {
+                                // Tampilkan dialog error jika detail tempat kosong
+                                Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  title: "Gagal Membuat Janji Temu",
+                                  desc: "Mohon masukkan detail tempat",
+                                  buttons: [
+                                    DialogButton(
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                      width: 120,
+                                      color: Colors.red,
+                                    )
+                                  ],
+                                ).show();
+                              } else {
+                                try {
+                                  final appointment = AppointmentModel(
+                                    userId: '',
+                                    companionId: '',
+                                    date: DateTime(
+                                      _selectedDate.year,
+                                      _selectedDate.month,
+                                      _selectedDate.day,
+                                      _selectedTime.hour,
+                                      _selectedTime.minute,
+                                    ),
+                                    locationDetail:
+                                        locationDetailController.text,
+                                  );
+                                  await createAppointment(appointment);
+                                  print('Appointment created');
+                                } catch (e) {
+                                  print('Failed to create appointment: $e');
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(

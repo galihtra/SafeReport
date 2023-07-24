@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:safe_report/screens/kampanye_notif.dart';
 import 'package:safe_report/screens/pendampingan_notif.dart';
 
 class Notifications extends StatelessWidget {
@@ -219,7 +220,7 @@ class Notifications extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PendampinganNotif(),
+                      builder: (context) => KampanyeNotif(),
                     ),
                   );
                 },
