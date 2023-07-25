@@ -28,7 +28,7 @@ class BarNavigation extends StatefulWidget {
 
 class _NavigationBar extends State<BarNavigation> {
   int _currentIndex = 0;
-  final pages = [HomeScreen(), Status(), Notifications(), Profile(), StoryPelaporanUser()];
+  final pages = [HomeScreen(), Status(), Notifications(), StoryPelaporanUser(), Profile()];
 
   @override
   void initState() {
@@ -66,15 +66,15 @@ class _NavigationBar extends State<BarNavigation> {
               label: '',
             ),
             new BottomNavigationBarItem(
+              icon: new Image.asset('assets/images/history_nonactive.png'),
+              activeIcon: new Image.asset('assets/images/history_active.png'),
+              label: '',
+            ),
+            new BottomNavigationBarItem(
               icon: new Image.asset('assets/images/user.png'),
               activeIcon: new Image.asset('assets/images/user_active.png'),
               label: '',
             ),
-            new BottomNavigationBarItem(
-              icon: new Image.asset('assets/images/history_nonactive.png'),
-              activeIcon: new Image.asset('assets/images/history_active.png'),
-              label: '',
-            )
           ]),
     );
   }

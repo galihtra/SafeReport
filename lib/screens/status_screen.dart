@@ -302,6 +302,7 @@ class _StatusState extends State<Status> {
                           return buildNonActiveItem(index); // Show non-active item on error
                         } else {
                           var adminName = snapshot.data;
+                          var userReport;
                           if (adminName != null) {
                             // Update the textList with the admin's name and submission date
                             var userReport = reports.firstWhere((report) =>
@@ -312,7 +313,6 @@ class _StatusState extends State<Status> {
                               
                             descList[index] = "Selesai";
                           }
-
                           return buildActiveItem(index);
                         }
                       },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -238,6 +239,10 @@ class ReportDetailPage extends StatefulWidget {
 }
 
 class _ReportDetailPageState extends State<ReportDetailPage> {
+  bool isTerimaLoading = false;
+  bool isTolakLoading = false;
+
+
   Future<void> _deleteReport(BuildContext context) async {
     try {
       await widget.reportRef.delete();
@@ -624,8 +629,14 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
               children: [
                 if (widget.formData['verification'] == null)
                   ElevatedButton(
-                    onPressed: () {
-                      _terimaReport(context, widget.reportRef);
+                    onPressed: () async {
+                      setState(() {
+                        isTerimaLoading = true;
+                      });
+                      await _terimaReport(context, widget.reportRef);
+                      setState(() {
+                        isTerimaLoading = false;
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFFEC407A),
@@ -639,8 +650,14 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                   SizedBox(width: 10),
                 if (widget.formData['verification'] == null)
                   ElevatedButton(
-                    onPressed: () {
-                      _tolakReport(context, widget.reportRef);
+                    onPressed: () async {
+                      setState(() {
+                        isTolakLoading = true;
+                      });
+                      await _tolakReport(context, widget.reportRef);
+                      setState(() {
+                        isTolakLoading = false;
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color(0xFFEC407A),
@@ -771,28 +788,64 @@ class _DiterimaOlehPageState extends State<DiterimaOlehPage> {
     }
   }
 
-  void _selesai() async {
-    // Update the report's information with the admin's name and note
-    try {
-      await widget.reportRef.update({
-       'selesai': 'selesai'
-      });
-      // Navigate back to the previous page (ReportDetailPage)
-      Navigator.pop(context);
-    } catch (error) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text(
-              'try again.',
-            ),
-          );
-        },
-      );
-    }
+void _selesai() async {
+  // Get the data from the 'report' collection
+  DocumentSnapshot reportSnapshot = await widget.reportRef.get();
+  Map<String, dynamic> reportData = reportSnapshot.data() as Map<String, dynamic>;
+
+  // Add the 'selesai' field with value 'selesai' in the 'report' collection
+  try {
+    await widget.reportRef.update({
+      'selesai': 'selesai',
+    });
+  } catch (error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(
+            'An error occurred while updating the report. Please try again.',
+          ),
+        );
+      },
+    );
   }
+
+  // Add data to the 'complete_reports' collection
+  try {
+    await FirebaseFirestore.instance.collection('complete_reports').add({
+      'uid': reportData['uid'],
+      'nama': reportData['nama'],
+      'nim': reportData['nim'],
+      'bukti_pendukung': reportData['bukti_pendukung'],
+      'jam': reportData['jam'],
+      'tanggal_kejadian': reportData['tanggalKejadian'],
+      'prodi': reportData['prodi'],
+      'gender': reportData['gender'],
+      'bentuk_kasus': reportData['bentukKasus'],
+      'jenis_kasus': reportData['jenisKasus'],
+      'selesai': 'selesai',
+      'isReviewSubmitted': false,
+    });
+  } catch (error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(
+            'An error occurred while adding data to complete_reports collection. Please try again.',
+          ),
+        );
+      },
+    );
+  }
+
+  // Navigate back to the previous page (ReportDetailPage)
+  Navigator.pop(context);
+}
+
 
   @override
   Widget build(BuildContext context) {
