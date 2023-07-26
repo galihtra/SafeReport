@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:safe_report/screens/edukasi.dart';
 import 'package:safe_report/screens/kampanye.dart';
 import 'package:safe_report/screens/rescue.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -250,31 +251,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Edukasi
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Color(0xFFF4E8EA),
-                                    child: Image.asset(
-                                        "assets/images/edukasi_logo.png"),
-                                  ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Edukasi(), // Ganti dengan halaman kampanye yang sesuai
                                 ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Edukasi",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF9D9D9D),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Color(0xFFF4E8EA),
+                                      child: Image.asset(
+                                          "assets/images/edukasi_logo.png"),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Edukasi",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF9D9D9D),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           // Kampanye
