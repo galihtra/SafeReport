@@ -57,6 +57,7 @@ dependencies:
   rflutter_alert: ^2.0.4
   here_sdk:
     path: plugins/here_sdk
+  youtube_player_flutter: ^8.1.2  
 
 
 dev_dependencies:
