@@ -336,6 +336,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.4"
+  here_sdk:
+    dependency: "direct main"
+    description:
+      path: "plugins/here_sdk"
+      relative: true
+    source: path
+    version: "4.15.0"
   http:
     dependency: transitive
     description:
@@ -831,4 +838,4 @@ packages:
     version: "5.4.1"
 sdks:
   dart: ">=2.19.6 <3.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.3.2"
