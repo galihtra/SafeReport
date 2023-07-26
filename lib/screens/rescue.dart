@@ -7,7 +7,7 @@ class Rescue extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Rescue"),
+        title: Text("Hello"),
       ),
     );
   }
