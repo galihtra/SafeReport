@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:safe_report/screens/admin_kampanye.dart';
 import 'package:safe_report/screens/admin_pendampingan.dart';
+import 'package:safe_report/screens/admin_rescue.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
@@ -134,31 +135,43 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Rescue
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Colors.red,
-                                    child: Image.asset(
-                                        "assets/images/rescue_logo.png"),
-                                  ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AdminRescue(), // Ganti dengan halaman kampanye yang sesuai
                                 ),
-                                SizedBox(height: 8),
-                                Text(
-                                  "Rescue",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Color(0xFF9D9D9D),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Colors.red,
+                                      child: Image.asset(
+                                          "assets/images/rescue_logo.png"),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Rescue",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF9D9D9D),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           // Pendampingan
