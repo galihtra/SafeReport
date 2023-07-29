@@ -205,7 +205,7 @@ class _StatusState extends State<Status> {
                   } else if (index == 2 &&
                       reports.any((report) =>
                           report['uid'] == userUID &&
-                          report['status'] == "Accepted" && report['verification'] == true || report['verification'] == false)) {
+                          report['status'] == "Accepted" && report['verification'] == true)) {
                     // Change the image for Check_nonactive.png to Check_active.png
                     imageAssets[index] = 'assets/images/Assignment.png';
 
@@ -225,16 +225,55 @@ class _StatusState extends State<Status> {
                                 report['uid'] == userUID && report['status'] == "Accepted");
 
                             // Convert the Timestamp object to a DateTime
-                            var timestamp = userReport['tanggal_diterima_petugas'] as Timestamp;
+                            var timestamp = userReport['tanggal_diverifikasi'] as Timestamp;
                             var submissionTime = timestamp.toDate();
                             var formattedDate = DateFormat('dd MMMM yyyy', 'en_US').format(submissionTime);
 
                             var formattedTime = DateFormat('HH:mm').format(submissionTime); 
-
+                            
                             textList[index] =
                                 "Laporan diverifikasi oleh $adminName - $formattedDate $formattedTime";
                               
                             descList[index] = "diverifikasi oleh $adminName";
+                          }
+
+                          return buildActiveItem(index);
+                        }
+                      },
+                    );
+                  } else if (index == 2 &&
+                      reports.any((report) =>
+                          report['uid'] == userUID &&
+                          report['status'] == "Accepted" && report['verification'] == false)) {
+                    // Change the image for Check_nonactive.png to Check_active.png
+                    imageAssets[index] = 'assets/images/Assignment.png';
+
+                    // Fetch the admin's name with isAdmin == true from the "users" collection
+                    return FutureBuilder<String?>(
+                      future: getAdminName(userUID),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return buildActiveItem(index); // Placeholder while fetching
+                        } else if (snapshot.hasError) {
+                          return buildNonActiveItem(index); // Show non-active item on error
+                        } else {
+                          var adminName = snapshot.data;
+                          if (adminName != null) {
+                            // Update the textList with the admin's name and submission date
+                            var userReport = reports.firstWhere((report) =>
+                                report['uid'] == userUID && report['status'] == "Accepted");
+
+                            // Convert the Timestamp object to a DateTime
+                            var timestamp = userReport['tanggal_diverifikasi'] as Timestamp;
+                            var submissionTime = timestamp.toDate();
+                            var formattedDate = DateFormat('dd MMMM yyyy', 'en_US').format(submissionTime);
+
+                            var formattedTime = userReport['jam_diverifikasi']; 
+                            
+                            textList[index] =
+                                "Laporan ditolak oleh $adminName - $formattedDate $formattedTime";
+                              
+                            descList[index] = "ditolak oleh $adminName";
                           }
 
                           return buildActiveItem(index);

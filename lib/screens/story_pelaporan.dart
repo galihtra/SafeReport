@@ -192,7 +192,7 @@ class _ReportCardState extends State<ReportCard> {
                           ),
                         ),
                         child: Text(
-                          widget.isReviewSubmitted ? 'Complete' : 'Selesai',
+                          widget.isReviewSubmitted ? 'Selesai' : 'Selesai',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -306,7 +306,7 @@ class _ReportCardState extends State<ReportCard> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.isReviewSubmitted ? 'Complete' : 'Ulasan',
+                      widget.isReviewSubmitted ? 'Selesai' : 'Ulasan',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
