@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:safe_report/screens/kampanye.dart';
+import 'package:safe_report/screens/konsultasi.dart';
 import 'package:safe_report/screens/rescue.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
@@ -202,44 +203,53 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           // Konsultasi Online
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 20),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    width: 75,
-                                    height: 75,
-                                    color: Color(0xFFF4E8EA),
-                                    child: Image.asset(
-                                        "assets/images/konsultasi_logo.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Konsultasi()),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(height: 20),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      width: 75,
+                                      height: 75,
+                                      color: Color(0xFFF4E8EA),
+                                      child: Image.asset(
+                                          "assets/images/konsultasi_logo.png"),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 8),
-                                Column(
-                                  children: [
-                                    Text(
-                                      "Konsultasi",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Color(0xFF9D9D9D),
+                                  SizedBox(height: 8),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "Konsultasi",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF9D9D9D),
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "Online",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Color(0xFF9D9D9D),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Online",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF9D9D9D),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
