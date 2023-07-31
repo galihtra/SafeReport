@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:safe_report/screens/report_success.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PelaporanForm extends StatefulWidget {
   @override
@@ -59,36 +60,37 @@ class _PelaporanFormState extends State<PelaporanForm> {
   String? jurusanPelaku;
   String? prodiPelaku;
   String? kelasPelaku;
+  TimeOfDay selectedTime = TimeOfDay.now();
 
   void _pickFile() async {
-  final picker = ImagePicker();
+    final picker = ImagePicker();
 
-  final imageSource = await showDialog<ImageSource>(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      title: Text('Select Image Source'),
-      actions: [
-        TextButton(
-          child: Text('Camera'),
-          onPressed: () => Navigator.pop(context, ImageSource.camera),
-        ),
-        TextButton(
-          child: Text('Gallery'),
-          onPressed: () => Navigator.pop(context, ImageSource.gallery),
-        ),
-      ],
-    ),
-  );
+    final imageSource = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Select Image Source'),
+        actions: [
+          TextButton(
+            child: Text('Camera'),
+            onPressed: () => Navigator.pop(context, ImageSource.camera),
+          ),
+          TextButton(
+            child: Text('Gallery'),
+            onPressed: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+        ],
+      ),
+    );
 
-  if (imageSource != null) {
-    PickedFile? image = await picker.getImage(source: imageSource);
-    if (image != null) {
-      setState(() {
-        _pickedFile = File(image.path);
-      });
+    if (imageSource != null) {
+      PickedFile? image = await picker.getImage(source: imageSource);
+      if (image != null) {
+        setState(() {
+          _pickedFile = File(image.path);
+        });
+      }
     }
   }
-}
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -106,91 +108,170 @@ class _PelaporanFormState extends State<PelaporanForm> {
     }
   }
 
+  void _selectTime() async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedTime) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
+    }
+  }
+
+  Map<String, int> userReportCounts = {};
+  // Function to fetch the user's report count
+  Future<int> getUserReportCount(String uid) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final snapshot = await firestore.collection('users').doc(uid).get();
+      final data = snapshot.data();
+      if (data != null && data.containsKey('id')) {
+        return data['id'];
+      } else {
+        return 0;
+      }
+    } catch (error) {
+      print('Error fetching user report count: $error');
+      return 0;
+    }
+  }
+
+  Future<void> updateUserReportCount(String uid, int newCount) async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      await firestore.collection('users').doc(uid).update({'id': newCount});
+    } catch (error) {
+      print('Error updating user report count: $error');
+    }
+  }
+
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
+
   Future<void> _submitForm() async {
-   if (_formKey.currentState!.validate()) {
-    String? fileUrl;
-    if (_pickedFile != null) {
-      final firebase_storage.Reference storageRef =
-          _storage.ref('report/files/${_namaController.text}');
-      final firebase_storage.UploadTask uploadTask =
-          storageRef.putFile(_pickedFile!);
-      final firebase_storage.TaskSnapshot snapshot =
-          await uploadTask.whenComplete(() {});
-      fileUrl = await snapshot.ref.getDownloadURL();
-    }
+    if (_formKey.currentState!.validate()) {
+      // Get the current user's UID
+      final User? user = FirebaseAuth.instance.currentUser;
+      final uid = user?.uid;
 
-      if (_formKey.currentState!.validate()) {
-        try {
-          final formData = {
-            'nama': _namaController.text,
-            'nim': _nimController.text,
-            'noTelp': _noTelpController.text,
-            'namaPelaku': _namaPelakuController.text,
-            'noTelpPelaku': _noTelpPelakuController.text,
-            'deskripsiPelaku': _deskripsiPelakuController.text,
-            'tanggalKejadian': _tanggalKejadianController.text,
-            'tempatKejadian': _tempatKejadianController.text,
-            'kronologiKejadian': _kronologiKejadianController.text,
-            'namaSaksi': _namaSaksiController.text,
-            'noTelpSaksi': _noTelpSaksiController.text,
-            'keteranganSaksi': _keteranganSaksiController.text,
-            'gender': gender,
-            'jurusan': jurusan,
-            'prodi': prodi,
-            'kelas': kelas,
-            'jenisKasus': jenisKasus,
-            'bentukKasus': bentukKasus,
-            'genderPelaku': genderPelaku,
-            'jurusanPelaku': jurusanPelaku,
-            'prodiPelaku': prodiPelaku,
-            'kelasPelaku': kelasPelaku,
-            'bukti_pendukung': fileUrl
-          };
+      if (uid != null) {
+        final userReportCount = await getUserReportCount(uid);
+        int reportId = userReportCount + 1;
+        await updateUserReportCount(uid, reportId);
 
-          final firestore = FirebaseFirestore.instance;
-          await firestore.collection('report').add(formData);
+        String? fileUrl;
+        if (_pickedFile != null && FirebaseAuth.instance.currentUser != null) {
+          final User user = FirebaseAuth.instance.currentUser!;
+          final String baseFileName = _namaController.text;
 
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ReportSuccess()));
-
-          _namaController.clear();
-          _nimController.clear();
-          _noTelpController.clear();
-          _namaPelakuController.clear();
-          _noTelpPelakuController.clear();
-          _deskripsiPelakuController.clear();
-          _tanggalKejadianController.clear();
-          _tempatKejadianController.clear();
-          _kronologiKejadianController.clear();
-          _namaSaksiController.clear();
-          _noTelpSaksiController.clear();
-          _keteranganSaksiController.clear();
-          setState(() {
-            gender = 'Perempuan';
-            jurusan = null;
-            prodi = null;
-            kelas = null;
-            jenisKasus = null;
-            bentukKasus = null;
-            genderPelaku = 'Laki-laki';
-            jurusanPelaku = null;
-            prodiPelaku = null;
-            kelasPelaku = null;
-          });
-        } catch (error) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Error'),
-                content: Text(
-                    'An error occurred while submitting the form. Please try again.'),
-              );
-            },
-          );
+          try {
+            final firebase_storage.Reference storageRef = _storage.ref(
+                'report/images/${user.uid}-$baseFileName-$reportId'); // Using user's UID as part of the filename
+            final firebase_storage.UploadTask uploadTask =
+                storageRef.putFile(_pickedFile!);
+            final firebase_storage.TaskSnapshot snapshot = await uploadTask;
+            fileUrl = await snapshot.ref.getDownloadURL();
+          } catch (e) {
+            print('Error uploading file: $e');
+            return;
+          }
         }
+        if (_formKey.currentState!.validate()) {
+          String formattedTime = selectedTime.format(context);
+          try {
+            final formData = {
+              'uid': uid, // Add the UID to the form data
+              'nama': _namaController.text,
+              'nim': _nimController.text,
+              'noTelp': _noTelpController.text,
+              'namaPelaku': _namaPelakuController.text,
+              'noTelpPelaku': _noTelpPelakuController.text,
+              'deskripsiPelaku': _deskripsiPelakuController.text,
+              'tanggalKejadian': _tanggalKejadianController.text,
+              'jam': formattedTime,
+              'tempatKejadian': _tempatKejadianController.text,
+              'kronologiKejadian': _kronologiKejadianController.text,
+              'namaSaksi': _namaSaksiController.text,
+              'noTelpSaksi': _noTelpSaksiController.text,
+              'keteranganSaksi': _keteranganSaksiController.text,
+              'gender': gender,
+              'jurusan': jurusan,
+              'prodi': prodi,
+              'kelas': kelas,
+              'jenisKasus': jenisKasus,
+              'bentukKasus': bentukKasus,
+              'genderPelaku': genderPelaku,
+              'jurusanPelaku': jurusanPelaku,
+              'prodiPelaku': prodiPelaku,
+              'kelasPelaku': kelasPelaku,
+              'bukti_pendukung': fileUrl,
+              'status': null,
+              'tanggal_diterima_petugas': null,
+              'diterima_oleh': null,
+              'tanggal_diterima': null,
+              'jam_diterima': null,
+              'selesai': null,
+              'verification': null,
+            };
+
+            final firestore = FirebaseFirestore.instance;
+           final userReportDoc = await firestore.collection('report').where('uid', isEqualTo: uid).get();
+            if (userReportDoc.docs.isEmpty) {
+              // If there's no existing report for the user, create a new one
+              await firestore.collection('report').add(formData);
+            } else {
+              // If there's an existing report for the user, update it
+              final reportId = userReportDoc.docs.first.id;
+              await firestore.collection('report').doc(reportId).update(formData);
+            }
+
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ReportSuccess()));
+
+            // Clear the form fields and reset the state
+            _namaController.clear();
+            _nimController.clear();
+            _noTelpController.clear();
+            _namaPelakuController.clear();
+            _noTelpPelakuController.clear();
+            _deskripsiPelakuController.clear();
+            _tanggalKejadianController.clear();
+            _tempatKejadianController.clear();
+            _kronologiKejadianController.clear();
+            _namaSaksiController.clear();
+            _noTelpSaksiController.clear();
+            _keteranganSaksiController.clear();
+            setState(() {
+              gender = 'Perempuan';
+              jurusan = null;
+              prodi = null;
+              kelas = null;
+              jenisKasus = null;
+              bentukKasus = null;
+              genderPelaku = 'Laki-laki';
+              jurusanPelaku = null;
+              prodiPelaku = null;
+              kelasPelaku = null;
+            });
+          } catch (error) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Error'),
+                  content: Text(
+                      'An error occurred while submitting the form. Please try again.'),
+                );
+              },
+            );
+          }
+        }
+      } else {
+        print("User not authenticated or UID is null");
+        return;
       }
     }
   }
@@ -831,6 +912,43 @@ class _PelaporanFormState extends State<PelaporanForm> {
                   height: 20,
                 ),
                 Text(
+                  'Jam',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                  ),
+                ),
+                SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {
+                    _selectTime(); // Call _selectTime function when tapped
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: TextEditingController(
+                        // Use the selected time to display in the form field
+                        text: selectedTime.format(context),
+                      ),
+                      readOnly: true, // Make the input field read-only
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Color(0xFFCECCCC)),
+                        filled: true,
+                        fillColor: Color(0xFFF2F2F2),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.access_time,
+                          color: Color(0xFFCECCCC),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
                   'Tempat Kejadian',
                   style: GoogleFonts.inter(
                     fontSize: 14,
@@ -864,6 +982,7 @@ class _PelaporanFormState extends State<PelaporanForm> {
                   height: 10,
                 ),
                 TextFormField(
+                  maxLines: 3,
                   controller: _kronologiKejadianController,
                   decoration: InputDecoration(
                       hintText: '',
@@ -912,7 +1031,7 @@ class _PelaporanFormState extends State<PelaporanForm> {
                     GestureDetector(
                       onTap: () {
                         // Add image picking functionality here
-                       _pickFile();
+                        _pickFile();
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 20.0, right: 20.0),

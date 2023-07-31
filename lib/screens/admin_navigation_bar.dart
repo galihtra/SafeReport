@@ -25,7 +25,7 @@ class AdminNavigationBar extends StatefulWidget {
 
 class _NavigationBar extends State<AdminNavigationBar> {
   int _currentIndex = 0;
-  final pages = [AdminHomeScreen(), Status(), ArticleListScreen(), Notifications(), Profile()];
+  final pages = [AdminHomeScreen(), ArticleListScreen(), Profile()];
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +47,8 @@ class _NavigationBar extends State<AdminNavigationBar> {
               label: '',
             ),
             new BottomNavigationBarItem(
-              icon: new Image.asset('assets/images/status.png'),
-              activeIcon: new Image.asset('assets/images/status_active.png'),
-              label: '',
-            ),
-            new BottomNavigationBarItem(
               icon: new Image.asset('assets/images/article.png'),
               activeIcon: new Image.asset('assets/images/article_active.png'),
-              label: '',
-            ),
-            new BottomNavigationBarItem(
-              icon: new Image.asset('assets/images/notif.png'),
-              activeIcon: new Image.asset('assets/images/notif_active.png'),
               label: '',
             ),
             new BottomNavigationBarItem(
