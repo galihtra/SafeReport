@@ -113,7 +113,7 @@ class _EdukasiState extends State<Edukasi> {
                                 ),
                                 showVideoProgressIndicator: true,
                               ),
-                              SizedBox(height: 12),
+                              SizedBox(height: 14),
                               Padding(
                                 padding: const EdgeInsets.all(0.0),
                                 child: Column(
