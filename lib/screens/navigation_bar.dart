@@ -5,6 +5,7 @@ import 'package:safe_report/screens/home_screen.dart';
 import 'package:safe_report/screens/status_screen.dart';
 import 'package:safe_report/screens/notifications_screen.dart';
 import 'package:safe_report/screens/profile_screen.dart';
+import 'package:safe_report/screens/story_pelaporan.dart';
 
 class BarNavigation extends StatefulWidget {
   final int currentIndex;
@@ -27,7 +28,7 @@ class BarNavigation extends StatefulWidget {
 
 class _NavigationBar extends State<BarNavigation> {
   int _currentIndex = 0;
-  final pages = [HomeScreen(), Status(), Notifications(), Profile()];
+  final pages = [HomeScreen(), Status(), Notifications(), StoryPelaporanUser(), Profile()];
 
   @override
   void initState() {
@@ -65,10 +66,15 @@ class _NavigationBar extends State<BarNavigation> {
               label: '',
             ),
             new BottomNavigationBarItem(
+              icon: new Image.asset('assets/images/history_nonactive.png'),
+              activeIcon: new Image.asset('assets/images/history_active.png'),
+              label: '',
+            ),
+            new BottomNavigationBarItem(
               icon: new Image.asset('assets/images/user.png'),
               activeIcon: new Image.asset('assets/images/user_active.png'),
               label: '',
-            )
+            ),
           ]),
     );
   }
