@@ -10,6 +10,10 @@
         android:label="safe_report"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <meta-data android:name="com.here.sdk.access_key_id" android:value="46bh_b1ftiRjpfC60fpSeg"/>
+        <meta-data android:name="com.here.sdk.access_key_secret" android:value="NTRVnCJYAvdywzU0uICwxeNE8tGpkS6FHz4UU3khtISJFhsGKlmXpyM0eVpq-ckvMVObuU8gC27DNkOvU7izmg"/>
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
