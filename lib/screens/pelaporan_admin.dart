@@ -284,8 +284,8 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
       // Update data in the current reportRef document
       await reportRef.update({
         "verification": true,
-        "tanggal_diterima": DateFormat('dd MMMM yyyy').format(currentDate),
-        "jam_diterima": TimeOfDay.fromDateTime(currentDate).format(context),
+        "tanggal_diverifikasi": DateFormat('dd MMMM yyyy').format(currentDate),
+        "jam_diverifikasi": TimeOfDay.fromDateTime(currentDate).format(context),
       });
 
       // Create a new document in the "report_history" collection
@@ -357,8 +357,8 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
 
         await reportRef.update({
           "verification": false,
-          "tanggal_diterima": DateFormat('dd MMMM yyyy').format(currentDate),
-          "jam_diterima": TimeOfDay.fromDateTime(currentDate).format(context),
+          "tanggal_verifikasi_tolak": DateFormat('dd MMMM yyyy').format(currentDate),
+          "jam_verifikasi_tolak": TimeOfDay.fromDateTime(currentDate).format(context),
         });
 
         // Create a new document in the "report_history" collection

@@ -84,7 +84,8 @@ class _EdukasiState extends State<Edukasi> {
                         return Center(child: CircularProgressIndicator());
                       }
 
-                      if (videoSnapshot.hasError || videoSnapshot.data == null) {
+                      if (videoSnapshot.hasError ||
+                          videoSnapshot.data == null) {
                         return SizedBox
                             .shrink(); // Placeholder for videos that couldn't be fetched or had errors.
                       }
@@ -92,7 +93,8 @@ class _EdukasiState extends State<Edukasi> {
                       final video = videoSnapshot.data!;
                       final viewsCount = video.engagement?.viewCount ?? 0;
                       final formattedViewsCount = formatViewsCount(viewsCount);
-                      final uploadDate = video.uploadDate ?? DateTime(2000, 1, 1); // Default date if null.
+                      final uploadDate = video.uploadDate ??
+                          DateTime(2000, 1, 1); // Default date if null.
 
                       return GestureDetector(
                         onTap: () {
@@ -221,4 +223,3 @@ class _EdukasiState extends State<Edukasi> {
     );
   }
 }
-

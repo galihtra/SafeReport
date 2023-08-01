@@ -11,7 +11,8 @@ class HistoryAdmin extends StatefulWidget {
 
 class _HistoryAdmin extends State<HistoryAdmin> {
   // Function to show the detail dialog
-  void _showDetailDialog(String tanggal, String jam, String nama, String jurusan, String prodi, String no_telp, String bentuk_kasus) {
+  void _showDetailDialog(String tanggal, String jam, String nama,
+      String jurusan, String prodi, String no_telp, String bentuk_kasus) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -35,7 +36,18 @@ class _HistoryAdmin extends State<HistoryAdmin> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('OK'),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.green,
+                ),
+                child: Text(
+                  "OK",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         );
@@ -57,7 +69,8 @@ class _HistoryAdmin extends State<HistoryAdmin> {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('report_history').snapshots(),
+        stream:
+            FirebaseFirestore.instance.collection('report_history').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -88,18 +101,20 @@ class _HistoryAdmin extends State<HistoryAdmin> {
                         tanggalInfo = document['tanggal_ditolak'];
                         jamInfo = document['jam_ditolak'];
                       }
-                      _showDetailDialog(tanggalInfo, jamInfo, nama, jurusan, prodi, noTelp, bentukKasus);
+                      _showDetailDialog(tanggalInfo, jamInfo, nama, jurusan,
+                          prodi, noTelp, bentukKasus);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Stack(
                         children: [
                           ListTile(
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             title: Text(
                               '$nama',
-                              style: GoogleFonts.openSans(fontWeight: FontWeight.bold),
+                              style: GoogleFonts.openSans(
+                                  fontWeight: FontWeight.bold),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,12 +129,17 @@ class _HistoryAdmin extends State<HistoryAdmin> {
                             bottom: 0,
                             right: 0,
                             child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              color: statusColor,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: statusColor,
+                              ),
                               child: Text(
                                 statusText,
-                                style:
-                                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

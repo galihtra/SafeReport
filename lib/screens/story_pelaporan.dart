@@ -324,74 +324,73 @@ class _ReportCardState extends State<ReportCard> {
   }
 
   void _submitReview(BuildContext context) async {
-  try {
-    String _currentUserUid = getCurrentUserUid();
+    try {
+      String _currentUserUid = getCurrentUserUid();
 
-    // Assuming you have a 'comments' collection reference
-    CollectionReference commentsRef =
-        FirebaseFirestore.instance.collection('riwayat_laporan');
+      // Assuming you have a 'comments' collection reference
+      CollectionReference commentsRef =
+          FirebaseFirestore.instance.collection('riwayat_laporan');
 
-    // Prepare the data for the new comment
-    Map<String, dynamic> commentData = {
-      'uid': _currentUserUid,
-      'rating': _rating,
-      'comment': _comment,
-      'time': FieldValue.serverTimestamp(),
-      'isReviewSubmitted': true,
-      // You can add other fields as needed, such as user ID, report ID, etc.
-    };
+      // Prepare the data for the new comment
+      Map<String, dynamic> commentData = {
+        'uid': _currentUserUid,
+        'rating': _rating,
+        'comment': _comment,
+        'time': FieldValue.serverTimestamp(),
+        'isReviewSubmitted': true,
+        // You can add other fields as needed, such as user ID, report ID, etc.
+      };
 
-    // Add the comment to the 'comments' collection
-    await commentsRef.add(commentData);
+      // Add the comment to the 'comments' collection
+      await commentsRef.add(commentData);
 
-    // Assuming you have a 'complete_reports' collection reference
-    CollectionReference completeReportsRef =
-        FirebaseFirestore.instance.collection('complete_reports');
+      // Assuming you have a 'complete_reports' collection reference
+      CollectionReference completeReportsRef =
+          FirebaseFirestore.instance.collection('complete_reports');
 
-    // Update the 'complete_reports' collection with the review information
-    await completeReportsRef.doc(widget.reportId).update({
-      'isReviewSubmitted': true,
-    });
+      // Update the 'complete_reports' collection with the review information
+      await completeReportsRef.doc(widget.reportId).update({
+        'isReviewSubmitted': true,
+      });
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Success'),
-          content: Text(
-            'Review submitted successfully!',
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.green,
-              ),
-              child: Text('OK'),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text(
+              'Review submitted successfully!',
             ),
-          ],
-        );
-      },
-    );
-    // Show a success message or perform any other actions as needed
-  } catch (error) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(
-            'An error occurred while submitting the review. Please try again.',
-          ),
-        );
-      },
-    );
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                ),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      // Show a success message or perform any other actions as needed
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(
+              'An error occurred while submitting the review. Please try again.',
+            ),
+          );
+        },
+      );
+    }
   }
-}
-
 
   // Method to show the bottom sheet when "Ulasan" button is pressed
   void _showBottomSheet(BuildContext context) {
@@ -420,87 +419,89 @@ class _ReportCardState extends State<ReportCard> {
             ],
           ),
           content: Container(
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                widget.isReviewSubmitted
-                    ? RatingBarIndicator(
-                        rating: _rating,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        itemSize: 32.0,
-                      )
-                    : RatingBar.builder(
-                        initialRating: _rating,
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemCount: 5,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                        itemBuilder: (context, _) => Transform.scale(
-                          scale: 0.8,
-                          child: Icon(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  widget.isReviewSubmitted
+                      ? RatingBarIndicator(
+                          rating: _rating,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                          itemBuilder: (context, _) => Icon(
                             Icons.star,
                             color: Colors.amber,
                           ),
+                          itemSize: 20.0,
+                        )
+                      : RatingBar.builder(
+                          initialRating: _rating,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                          itemBuilder: (context, _) => Transform.scale(
+                            scale: 0.8,
+                            child: Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                          ),
+                          onRatingUpdate: (rating) {
+                            setState(() {
+                              _rating = rating;
+                            });
+                          },
                         ),
-                        onRatingUpdate: (rating) {
-                          setState(() {
-                            _rating = rating;
-                          });
-                        },
-                      ),
-                SizedBox(height: 10),
-                TextFormField(
-                  onChanged: (value) {
-                    setState(() {
-                      _comment = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Add your review here...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                  ),
-                  maxLines: 5,
-                  readOnly: widget.isReviewSubmitted,
-                ),
-                SizedBox(height: 10),
-                if (!widget.isReviewSubmitted)
-                  ElevatedButton(
-                    onPressed: () {
-                      _submitReview(context);
+                  SizedBox(height: 10),
+                  TextFormField(
+                    onChanged: (value) {
+                      setState(() {
+                        _comment = value;
+                      });
                     },
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFFEC407A),
-                      shape: RoundedRectangleBorder(
+                    decoration: InputDecoration(
+                      hintText: 'Add your review here...',
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      filled: true,
+                      fillColor: Colors.grey[200],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                    maxLines: 5,
+                    readOnly: widget.isReviewSubmitted,
+                  ),
+                  SizedBox(height: 10),
+                  if (!widget.isReviewSubmitted)
+                    ElevatedButton(
+                      onPressed: () {
+                        _submitReview(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFEC407A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         );
