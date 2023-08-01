@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:safe_report/screens/admin_edukasi.dart';
 import 'package:safe_report/screens/admin_kampanye.dart';
 import 'package:safe_report/screens/admin_pendampingan.dart';
-import 'package:safe_report/screens/konsultasi.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:safe_report/screens/article_detail_screen.dart';
 import 'package:safe_report/model/Article.dart';
@@ -203,18 +202,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           ),
                           // Konsultasi Online
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      Konsultasi(), // Ganti dengan halaman kampanye yang sesuai
-                                ),
-                              );
-                            },
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -273,8 +262,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               );
                             },
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
