@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safe_report/screens/admin_home_screen.dart';
-import 'package:safe_report/screens/status_screen.dart';
-import 'package:safe_report/screens/admin_notifications_screen.dart';
 import 'package:safe_report/screens/profile_screen.dart';
 import 'package:safe_report/screens/add_article.dart';
+import 'package:safe_report/screens/history_admin.dart';
 
 class AdminNavigationBar extends StatefulWidget {
   const AdminNavigationBar({Key? key}) : super(key: key);
@@ -25,7 +24,7 @@ class AdminNavigationBar extends StatefulWidget {
 
 class _NavigationBar extends State<AdminNavigationBar> {
   int _currentIndex = 0;
-  final pages = [AdminHomeScreen(), Status(), ArticleListScreen(), Notifications(), Profile()];
+  final pages = [AdminHomeScreen(), ArticleListScreen(), HistoryAdmin(), Profile()];
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +46,13 @@ class _NavigationBar extends State<AdminNavigationBar> {
               label: '',
             ),
             new BottomNavigationBarItem(
-              icon: new Image.asset('assets/images/status.png'),
-              activeIcon: new Image.asset('assets/images/status_active.png'),
-              label: '',
-            ),
-            new BottomNavigationBarItem(
               icon: new Image.asset('assets/images/article.png'),
               activeIcon: new Image.asset('assets/images/article_active.png'),
               label: '',
             ),
             new BottomNavigationBarItem(
-              icon: new Image.asset('assets/images/notif.png'),
-              activeIcon: new Image.asset('assets/images/notif_active.png'),
+              icon: new Image.asset('assets/images/history_nonactive.png'),
+              activeIcon: new Image.asset('assets/images/history_active.png'),
               label: '',
             ),
             new BottomNavigationBarItem(
