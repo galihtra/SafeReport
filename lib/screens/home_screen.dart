@@ -263,14 +263,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           // Edukasi
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      Edukasi(), // Ganti dengan halaman kampanye yang sesuai
-                                ),
-                              );
-                            },
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Edukasi(),
+                                  ),
+                                );
+                              },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(

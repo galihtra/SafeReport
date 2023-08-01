@@ -263,52 +263,78 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
   }
 
   Future<void> _terimaReport(
-      BuildContext context, DocumentReference reportRef) async {
-    try {
-      DateTime currentDate = DateTime.now();
+  BuildContext context, DocumentReference reportRef) async {
+  try {
+    DateTime currentDate = DateTime.now();
 
-      FirebaseAuth _auth = FirebaseAuth.instance;
-      var currentUser = _auth.currentUser;
-      if (currentUser != null) {
-        String adminUID = currentUser.uid;
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    var currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      String adminUID = currentUser.uid;
 
-        await reportRef.update({
-          "verification": true,
-          "tanggal_diterima": DateFormat('dd MMMM yyyy').format(currentDate),
-          "jam_diterima": TimeOfDay.fromDateTime(currentDate).format(context),
-        });
+      // Get the user's submitted data from the report document
+      DocumentSnapshot reportSnapshot = await reportRef.get();
+      String nama = reportSnapshot.get("nama");
+      String bentukKasus = reportSnapshot.get("bentukKasus");
+      String jurusan = reportSnapshot.get("jurusan");
+      String prodi = reportSnapshot.get("prodi");
+      String noTelp = reportSnapshot.get("noTelp");
+      String gender = reportSnapshot.get("gender");
 
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Report Accepted"),
-              content: Text("The report has been accepted successfully"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("OK"),
-                )
-              ],
-            );
-          },
-        );
-      }
-    } catch (error) {
+      // Update data in the current reportRef document
+      await reportRef.update({
+        "verification": true,
+        "tanggal_diverifikasi": DateFormat('dd MMMM yyyy').format(currentDate),
+        "jam_diverifikasi": TimeOfDay.fromDateTime(currentDate).format(context),
+      });
+
+      // Create a new document in the "report_history" collection
+      CollectionReference reportHistoryCollection =
+          FirebaseFirestore.instance.collection('report_history');
+      await reportHistoryCollection.add({
+        "nama": nama,
+        "bentuk_kasus": bentukKasus,
+        "jurusan": jurusan,
+        "prodi": prodi,
+        "verification": true,
+        "tanggal_diterima": DateFormat('dd MMMM yyyy').format(currentDate),
+        "no_telp": noTelp,
+        "gender": gender,
+        "jam_diterima": TimeOfDay.fromDateTime(currentDate).format(context),
+        // Add other relevant fields from the original reportRef document if needed
+      });
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text(
-                'An error occurred while accepting the report. Please try again.'),
+            title: Text("Report Accepted"),
+            content: Text("The report has been accepted successfully"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("OK"),
+              )
+            ],
           );
         },
       );
     }
+  } catch (error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(
+              'An error occurred while accepting the report. Please try again.'),
+        );
+      },
+    );
   }
+}
 
   Future<void> _tolakReport(
       BuildContext context, DocumentReference reportRef) async {
@@ -320,11 +346,36 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
       if (currentUser != null) {
         String adminUID = currentUser.uid;
 
+          // Get the user's submitted data from the report document
+        DocumentSnapshot reportSnapshot = await reportRef.get();
+        String nama = reportSnapshot.get("nama");
+        String bentukKasus = reportSnapshot.get("bentukKasus");
+        String jurusan = reportSnapshot.get("jurusan");
+        String prodi = reportSnapshot.get("prodi");
+        String noTelp = reportSnapshot.get("noTelp");
+        String gender = reportSnapshot.get("gender");
+
         await reportRef.update({
           "verification": false,
-          "tanggal_diterima": DateFormat('dd MMMM yyyy').format(currentDate),
-          "jam_diterima": TimeOfDay.fromDateTime(currentDate).format(context),
+          "tanggal_verifikasi_tolak": DateFormat('dd MMMM yyyy').format(currentDate),
+          "jam_verifikasi_tolak": TimeOfDay.fromDateTime(currentDate).format(context),
         });
+
+        // Create a new document in the "report_history" collection
+      CollectionReference reportHistoryCollection =
+          FirebaseFirestore.instance.collection('report_history');
+      await reportHistoryCollection.add({
+        "nama": nama,
+        "bentuk_kasus": bentukKasus,
+        "jurusan": jurusan,
+        "prodi": prodi,
+        "verification": false,
+        "tanggal_ditolak": DateFormat('dd MMMM yyyy').format(currentDate),
+        "no_telp": noTelp,
+        "gender": gender,
+        "jam_ditolak": TimeOfDay.fromDateTime(currentDate).format(context),
+        // Add other relevant fields from the original reportRef document if needed
+      });
 
         showDialog(
           context: context,
@@ -615,7 +666,7 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                     if (
                         widget.formData['verification'] != null)
                       if (widget.formData['verification'] == true ||
-                          widget.formData['verification'] == false && widget.formData['selesai'] == 'selesai')
+                          widget.formData['verification'] == false || widget.formData['selesai'] == 'selesai')
                         ElevatedButton(
                           onPressed: () {
                             _deleteReport(context);

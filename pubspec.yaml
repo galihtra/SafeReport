@@ -56,9 +56,10 @@ dependencies:
   collection: ^1.15.0
   rflutter_alert: ^2.0.4
   youtube_player_flutter: ^8.1.2  
-  youtube_explode_dart: ^1.11.0
   flutter_rating_bar: ^4.0.1
   auto_reload: ^1.0.1
+  provider: ^5.0.0
+  youtube_explode_dart: ^1.11.0
 
 dev_dependencies:
   flutter_test:
@@ -122,8 +123,6 @@ flutter:
     - assets/images/Assignment.png
     - assets/images/history_active.png
     - assets/images/history_nonactive.png
-
-
 
   #   - images/a_dot_ham.jpeg
 

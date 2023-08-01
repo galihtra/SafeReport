@@ -210,83 +210,94 @@ class _KampanyeNotifState extends State<KampanyeNotif> {
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0, right: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      if (campaign.zoomLink != null &&
-                                          campaign.zoomLink != "")
-                                        ElevatedButton.icon(
-                                          icon: Icon(Icons.video_call,
-                                              color: Colors.white),
-                                          label: Text('Join Zoom',
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                          onPressed: () =>
-                                              _launchURL(campaign.zoomLink!),
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<
-                                                    Color>(Color(0xFFEC407A)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        if (campaign.zoomLink != null &&
+                                            campaign.zoomLink != "")
+                                          ElevatedButton.icon(
+                                            icon: Icon(Icons.video_call,
+                                                color: Colors.white),
+                                            label: Text('Join Zoom',
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                            onPressed: () =>
+                                                _launchURL(campaign.zoomLink!),
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                      Color>(Color(0xFFEC407A)),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20))),
+                                            ),
+                                          )
+                                        else
+                                          ElevatedButton.icon(
+                                            icon: Icon(Icons.video_call,
+                                                color: Colors.black),
+                                            label: Text('Join Zoom',
+                                                style: TextStyle(
+                                                    color: Colors.black)),
+                                            onPressed: null, // Disabled button
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<
+                                                          Color>(
+                                                      Color.fromARGB(
+                                                          255, 227, 225, 225)),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20))),
+                                            ),
                                           ),
-                                        )
-                                      else
-                                        ElevatedButton.icon(
-                                          icon: Icon(Icons.video_call,
-                                              color: Colors.black),
-                                          label: Text('Join Zoom',
-                                              style: TextStyle(
-                                                  color: Colors.black)),
-                                          onPressed: null, // Disabled button
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty
-                                                    .all<Color>(Color.fromARGB(
-                                                        255, 227, 225, 225)),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20))),
+                                        Visibility(
+                                          visible: campaignCertificate != null,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton.icon(
+                                              icon: Icon(Icons.file_download),
+                                              label: Text('Unduh Sertifikat'),
+                                              onPressed:
+                                                  campaignCertificate != null
+                                                      ? () => _launchURL(
+                                                          campaignCertificate!
+                                                              .certificateUrl)
+                                                      : null,
+                                              style: ElevatedButton.styleFrom(
+                                                primary: Color(0xFF4CAF50),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      Visibility(
-                                        visible: campaignCertificate != null,
-                                        child: ElevatedButton.icon(
-                                          icon: Icon(Icons.file_download),
-                                          label: Text('Unduh Sertifikat'),
-                                          onPressed: campaignCertificate != null
-                                              ? () => _launchURL(
-                                                  campaignCertificate!
-                                                      .certificateUrl)
-                                              : null,
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Color(0xFF4CAF50),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                          replacement: Padding(
+                                            padding: const EdgeInsets.all(30.0),
+                                            child: Text(
+                                              'No certificate',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.red,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        replacement: Text(
-                                          'No certificate',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],

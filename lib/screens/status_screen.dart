@@ -225,14 +225,11 @@ class _StatusState extends State<Status> {
                                 report['uid'] == userUID && report['status'] == "Accepted");
 
                             // Convert the Timestamp object to a DateTime
-                            var timestamp = userReport['tanggal_diverifikasi'] as Timestamp;
-                            var submissionTime = timestamp.toDate();
-                            var formattedDate = DateFormat('dd MMMM yyyy', 'en_US').format(submissionTime);
-
-                            var formattedTime = DateFormat('HH:mm').format(submissionTime); 
+                            var timestamp = userReport['tanggal_diverifikasi'];
+                            var jam = userReport['jam_diverifikasi'];
                             
                             textList[index] =
-                                "Laporan diverifikasi oleh $adminName - $formattedDate $formattedTime";
+                                "Laporan diverifikasi oleh $adminName - $timestamp $jam";
                               
                             descList[index] = "diverifikasi oleh $adminName";
                           }
@@ -264,14 +261,12 @@ class _StatusState extends State<Status> {
                                 report['uid'] == userUID && report['status'] == "Accepted");
 
                             // Convert the Timestamp object to a DateTime
-                            var timestamp = userReport['tanggal_diverifikasi'] as Timestamp;
-                            var submissionTime = timestamp.toDate();
-                            var formattedDate = DateFormat('dd MMMM yyyy', 'en_US').format(submissionTime);
+                            var timestamp = userReport['tanggal_verifikasi_tolak'];;
 
-                            var formattedTime = userReport['jam_diverifikasi']; 
+                            var jam = userReport['jam_verifikasi_tolak']; 
                             
                             textList[index] =
-                                "Laporan ditolak oleh $adminName - $formattedDate $formattedTime";
+                                "Laporan ditolak oleh $adminName - $timestamp $jam";
                               
                             descList[index] = "ditolak oleh $adminName";
                           }
