@@ -20,7 +20,7 @@ class _AdminEdukasi extends State<AdminEdukasi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Youtube Player'),
+        title: Text('Upload Video Edukasi'),
         backgroundColor: Colors.redAccent,
       ),
       body: Column(
